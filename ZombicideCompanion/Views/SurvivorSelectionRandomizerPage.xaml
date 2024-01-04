@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ZombicideCompanion.Views.SurvivorSelectionRandomizerPage"
+             Title="Survivor Selection Randomizer">
+	<VerticalStackLayout Spacing="8" Margin="4">
+		<Label x:Name="RandomSurvivorLabel" Text="{Binding RandomSurvivor.Name}" FontSize="18"/>
+		<Button Text="Randomize Survivor!" Clicked="SelectRandomSurvivor_Clicked" FontSize="18"/>
+		<Button Text="Reset!" Clicked="Reset_Clicked" FontSize="18"/>
+		
+		<ListView x:Name="survivorCollection" ItemsSource="{Binding Survivors}">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<Label Text="{Binding Name}" FontSize="18" VerticalTextAlignment="Center"/>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</VerticalStackLayout>
+</ContentPage>
