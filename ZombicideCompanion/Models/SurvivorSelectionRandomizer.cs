@@ -34,8 +34,8 @@ namespace ZombicideCompanion.Models
                 new Survivor("'Butcher' Carl", SurvivorClassType.Civilian),
                 new Survivor("Captain Warlock", SurvivorClassType.Civilian),
                 new Survivor("Cloud", SurvivorClassType.Soldier),
-                new Survivor("Cyborg Eddie", SurvivorClassType.Soldier),
                 new Survivor("Cole", SurvivorClassType.Civilian),
+                new Survivor("Cyborg Eddie", SurvivorClassType.Soldier),
                 new Survivor("Doctor Stakefrieze", SurvivorClassType.Civilian),
                 new Survivor("Dorian The Grey", SurvivorClassType.Civilian),
                 new Survivor("Fiona", SurvivorClassType.Soldier),
@@ -51,6 +51,7 @@ namespace ZombicideCompanion.Models
                 new Survivor("Norton", SurvivorClassType.Civilian),
                 new Survivor("Nura Satar", SurvivorClassType.Civilian),
                 new Survivor("'Ook Ook'", SurvivorClassType.Civilian),
+                new Survivor("Samurai Eddie", SurvivorClassType.Soldier),
                 new Survivor("Solomon", SurvivorClassType.Soldier),
                 new Survivor("Vivian", SurvivorClassType.Civilian),
             };
