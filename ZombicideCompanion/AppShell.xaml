@@ -7,9 +7,16 @@
     Shell.FlyoutBehavior="Disabled"
     Title="ZombicideCompanion">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate views:SurvivorSelectionRandomizerPage}"
-        Route="SurvivorSelectionRandomizerPage" />
+	<TabBar>
+		<ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate views:MainPage}"
+            Route="MainPage" />
+
+		<ShellContent
+            Title="Randomizer"
+            ContentTemplate="{DataTemplate views:SurvivorSelectionRandomizerPage}"
+            Route="SurvivorSelectionRandomizerPage" />
+	</TabBar>
 
 </Shell>

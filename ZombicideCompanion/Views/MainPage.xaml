@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ZombicideCompanion.Views.MainPage"
+             Title="Main Page">
+    <VerticalStackLayout Spacing="8">
+        <Label 
+			FontSize="Header"
+			FontAttributes="Bold"
+            Text="Zombicide: Invader Companion"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+		<Button
+			Text="Survivor Randomizer"
+			Clicked="SurvivorRandomizerButton_Clicked">
+		</Button>
+	</VerticalStackLayout>
+</ContentPage>
