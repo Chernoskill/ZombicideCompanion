@@ -3,14 +3,22 @@
     public class Survivor
     {
         public string Name { get; set; } = default!;
-        public SurvivorClassType ClassType { get; set; } = SurvivorClassType.Civilian!;
+        private SurvivorClassType _classType;
 
-        public static string[] SurvivorClassNames = ["C", "S"];
-
-        public Survivor(string name) 
+        public SurvivorClassType ClassType
         {
-            Name = name;
+            get
+            {
+                return _classType;
+            }
+            set
+            {
+                _classType = value;
+                ClassTypeImageName = _classType == SurvivorClassType.Civilian ? "survivorclassciv.png" : "survivorclasssol.png";
+            }
         }
+        public string ClassTypeImageName { get; set; } = default!;
+
         public Survivor(string name, SurvivorClassType classType)
         {
             Name = name;

@@ -1,41 +1,42 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using ZombicideCompanion.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ZombicideCompanion.Views;
 
 public partial class SurvivorSelectionRandomizerPage : ContentPage
 {
-    public ObservableCollection<Survivor> Survivors { get; set; } = default!;
-    public string RandomTeamString { get; set; } = default!;
+    public ObservableCollection<Survivor> Survivors { get; set; } = new ObservableCollection<Survivor>();
+    public ObservableCollection<Survivor> RandomTeam { get; set; } = new ObservableCollection<Survivor>();
     public List<int> SurvivorIndices { get; set; } = default!;
 
     private const string SurvivorsFileName = "survivors.txt";
+    private const string EventSurvivorsLoaded = "SURVIVORS LOADED";
 
     public SurvivorSelectionRandomizerPage()
-	{
+    {
         WeakReferenceMessenger.Default.Register<string>(this, (r, m) =>
         {
             Console.WriteLine($"EVENT {m}");
-            if (m == "SURVIVORS LOADED")
+            if (m == EventSurvivorsLoaded)
             {
                 survivorsListView.SetBinding(ListView.ItemsSourceProperty, "Survivors");
             }
-
         });
 
         InitializeComponent();
 
         BindingContext = this;
 
+        randomTeamListView.SetBinding(ListView.ItemsSourceProperty, "RandomTeam");
+
         Task.Run(async () =>
         {
             await LoadSurvivorsAsync();
-            WeakReferenceMessenger.Default.Send("SURVIVORS LOADED");
+            WeakReferenceMessenger.Default.Send(EventSurvivorsLoaded);
         });
     }
 
@@ -45,37 +46,26 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
         //survivorCollection.ItemsSource = ((Models.SurvivorSelectionRandomizer)BindingContext).Survivors;
     }
 
-    private void SelectRandomTeam_Clicked(object sender, EventArgs e)
+    private void RandomizeTeam_Clicked(object sender, EventArgs e)
     {
         SurvivorIndices = Enumerable.Range(0, Survivors.Count).ToList();
-        RandomTeamString = "";
-        StringBuilder sb = new StringBuilder();
+        RandomTeam.Clear();
+        Random random = new Random();
         for (int i = 0; i < 6; i++)
         {
-            Random random = new Random();
             int index = random.Next(SurvivorIndices.Count);
             Survivor survivor = Survivors[SurvivorIndices[index]];
-            sb.Append($"{i + 1}: ");
-            sb.Append($"[{Survivor.SurvivorClassNames[(int)survivor.ClassType]}] ");
-            sb.Append(survivor.Name);
-            sb.Append('\n');
+            RandomTeam.Add(survivor);
             SurvivorIndices.RemoveAt(index);
         }
-        RandomTeamString += sb.ToString();
-        randomTeamLabel.SetBinding(Label.TextProperty, "RandomTeamString");
-        Console.WriteLine($"[SurvivorSelectionRandomizerPage/SelectRandomTeam_Clicked] RandomTeamString: {RandomTeamString}");
-    }
-
-    private async void MainPageButton_Clicked(object sender, EventArgs e)
-    {
-        await Navigation.PushAsync(new MainPage());
+        //randomTeamLabel.SetBinding(Label.TextProperty, "RandomTeamString");
     }
 
     public async Task LoadSurvivorsAsync()
     {
         //Console.WriteLine($"[SurvivorSelectionRandomizer/LoadSurvivors] SurvivorsPath: {MainPage.Config.SurvivorsPath}");
         string appDataDir = FileSystem.Current.AppDataDirectory;
-        string survivorsString = await FileUtility.LoadFile(Path.Combine(appDataDir,SurvivorsFileName));
+        string survivorsString = await FileUtility.LoadFile(Path.Combine(appDataDir, SurvivorsFileName));
         if (string.IsNullOrEmpty(survivorsString))
         {
             Console.WriteLine("[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] survivorsString is null or empty.");
@@ -86,53 +76,24 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
         Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] survivorsString lines.Length = {lines.Length}");
         for (int i = 0; i < lines.Length; i++)
         {
-            string line = lines[i].TrimStart().TrimEnd();
+            string line = lines[i].Trim();
             Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] line {i}: {line}");
             string name = line.Remove(line.Length - 1, 1).TrimEnd();
             string classString = line.Remove(0, line.Length - 2);
             SurvivorClassType suvClass = SurvivorClassType.Civilian;
-            if(int.TryParse(classString, out int classInt))
+            if (int.TryParse(classString, out int classInt))
             {
                 suvClass = (SurvivorClassType)classInt;
             }
-            
+
             survivorList.Add(new Survivor(name, suvClass));
             Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] Added survivor: {name} {suvClass}");
         }
 
-        Survivors = new ObservableCollection<Survivor>(survivorList.OrderBy(x => x.Name));
+        //Survivors = new ObservableCollection<Survivor>(survivorList.OrderBy(x => x.Name));
+        Survivors = new ObservableCollection<Survivor>(survivorList.OrderBy(x => Regex.Replace(x.Name, @"[^A-Za-z0-9]", "")));
 
         return;
-
-        //Survivors = new ObservableCollection<Survivor>()
-        //{
-        //    new Survivor("Andrei", SurvivorClassType.Soldier),
-        //    new Survivor("Baraka", SurvivorClassType.Soldier),
-        //    new Survivor("'Butcher' Carl", SurvivorClassType.Civilian),
-        //    new Survivor("Captain Warlock", SurvivorClassType.Civilian),
-        //    new Survivor("Cloud", SurvivorClassType.Soldier),
-        //    new Survivor("Cole", SurvivorClassType.Civilian),
-        //    new Survivor("Cyborg Eddie", SurvivorClassType.Soldier),
-        //    new Survivor("Doctor Stakefrieze", SurvivorClassType.Civilian),
-        //    new Survivor("Dorian The Grey", SurvivorClassType.Civilian),
-        //    new Survivor("Fiona", SurvivorClassType.Soldier),
-        //    new Survivor("Hugo Harker", SurvivorClassType.Civilian),
-        //    new Survivor("Inshish Vak", SurvivorClassType.Soldier),
-        //    new Survivor("Jared", SurvivorClassType.Soldier),
-        //    new Survivor("Jean", SurvivorClassType.Soldier),
-        //    new Survivor("Kyle", SurvivorClassType.Soldier),
-        //    new Survivor("Magnus", SurvivorClassType.Soldier),
-        //    new Survivor("Major Sharp", SurvivorClassType.Soldier),
-        //    new Survivor("Maria", SurvivorClassType.Soldier),
-        //    new Survivor("Mitsuki", SurvivorClassType.Civilian),
-        //    new Survivor("Norton", SurvivorClassType.Civilian),
-        //    new Survivor("Nura Satar", SurvivorClassType.Civilian),
-        //    new Survivor("'Ook Ook'", SurvivorClassType.Civilian),
-        //    new Survivor("Samurai Eddie", SurvivorClassType.Soldier),
-        //    new Survivor("Solomon", SurvivorClassType.Soldier),
-        //    new Survivor("Vivian", SurvivorClassType.Civilian),
-        //};
-        //Survivors = (ObservableCollection<string>)Survivors.Order();
     }
 
     private async void PickSurvivorFileButton_Clicked(object sender, EventArgs e)
@@ -153,7 +114,7 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
             Console.WriteLine($"[SurvivorSelectionRandomizer/LoadSurvivors] survivorsString \"{survivorsString}\" is null or empty.");
         }
         string appDataDir = FileSystem.Current.AppDataDirectory;
-        string targetPath = Path.Combine(appDataDir, Path.GetFileName(sourcePath!));
+        string targetPath = Path.Combine(appDataDir, SurvivorsFileName);
         await FileUtility.SaveFile(survivorsString, targetPath);
         Console.WriteLine($"[SurvivorSelectionRandomizer/LoadSurvivors] Saved survivorsFile to \"{targetPath}\".");
 

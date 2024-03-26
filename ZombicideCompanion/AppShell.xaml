@@ -8,15 +8,18 @@
     Title="ZombicideCompanion">
 
 	<TabBar>
-		<ShellContent
+		<Tab>
+			<ShellContent
             Title="Home"
             ContentTemplate="{DataTemplate views:MainPage}"
             Route="MainPage" />
 
-		<ShellContent
+			    <ShellContent
             Title="Randomizer"
             ContentTemplate="{DataTemplate views:SurvivorSelectionRandomizerPage}"
-            Route="SurvivorSelectionRandomizerPage" />
+            Route="SurvivorSelectionRandomizerPage" />  
+		</Tab>
+		
 	</TabBar>
 
 </Shell>

@@ -10,9 +10,5 @@
             Text="Zombicide: Invader Companion"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-		<Button
-			Text="Survivor Randomizer"
-			Clicked="SurvivorRandomizerButton_Clicked">
-		</Button>
 	</VerticalStackLayout>
 </ContentPage>

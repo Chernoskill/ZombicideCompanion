@@ -13,6 +13,8 @@ namespace ZombicideCompanion.Models
             using StreamWriter streamWriter = new StreamWriter(outputStream);
 
             await streamWriter.WriteAsync(str);
+
+            //Console.WriteLine($"[FileUtility/SaveFile] Write string: {str}");
         }
 
         public static async Task<string> LoadFile(string filePath)
@@ -23,7 +25,7 @@ namespace ZombicideCompanion.Models
                 using Stream fileStream = File.OpenRead(filePath);
                 using StreamReader reader = new StreamReader(fileStream);
                 var c = await reader.ReadToEndAsync();
-                Console.WriteLine($"[FileUtility/LoadFile] Loaded File.");
+                //Console.WriteLine($"[FileUtility/LoadFile] Loaded File: {c}");
                 return c;
             }
             catch (Exception ex)

@@ -1,10 +1,6 @@
-using CommunityToolkit.Maui.Core.Primitives;
-using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.Messaging;
-using System.Collections.ObjectModel;
 using System.Text;
 using ZombicideCompanion.Models;
-using static Android.Provider.Contacts;
 
 namespace ZombicideCompanion.Views;
 
@@ -13,7 +9,7 @@ public partial class MainPage : ContentPage
     public static ZoCoConfiguration Config { get; set; } = default!;
 
     public MainPage()
-	{
+    {
         WeakReferenceMessenger.Default.Register<string>(this, (r, m) =>
         {
             Console.WriteLine($"EVENT {m}");
@@ -39,7 +35,7 @@ public partial class MainPage : ContentPage
     private static async Task SaveConfigAsync()
     {
         StringBuilder sb = new StringBuilder();
-        if(Config == null)
+        if (Config == null)
         {
             Config = new ZoCoConfiguration();
         }
@@ -78,11 +74,5 @@ public partial class MainPage : ContentPage
         //    }
         //}
         //return;
-    }
-
-    private async void SurvivorRandomizerButton_Clicked(object sender, EventArgs e)
-    {
-        //await Navigation.PushAsync(new SurvivorSelectionRandomizerPage((IFilePicker)Handler!.MauiContext!.Services.GetService(typeof(IFilePicker))!));
-        await Navigation.PushAsync(new SurvivorSelectionRandomizerPage());
     }
 }

@@ -60,20 +60,5 @@ namespace ZombicideCompanion.Models
             //Survivors = (ObservableCollection<string>)Survivors.Order();
             SurvivorCount = Survivors.Count;
         }
-
-        public Survivor? SelectRandomSurvivor()
-        {
-            if (Survivors.Count == 0)
-            {
-                RandomSurvivor = new Survivor("[All taken!]");
-                return null;
-            }
-            Random random = new Random();
-            int i = random.Next(Survivors.Count);
-            Survivor survivor = Survivors[i];
-            RandomSurvivor = survivor;
-            Survivors.RemoveAt(i);
-            return survivor;
-        }
     }
 }
