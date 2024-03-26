@@ -10,13 +10,11 @@ namespace ZombicideCompanion.Views;
 
 public partial class SurvivorSelectionRandomizerPage : ContentPage
 {
-    public ObservableCollection<Survivor> Survivors
-    {
-        get; set;
-
-    } = default!;
-    private const string SurvivorsFileName = "survivors.txt";
+    public ObservableCollection<Survivor> Survivors { get; set; } = default!;
     public string RandomTeamString { get; set; } = default!;
+    public List<int> SurvivorIndices { get; set; } = default!;
+
+    private const string SurvivorsFileName = "survivors.txt";
 
     public SurvivorSelectionRandomizerPage()
 	{
@@ -38,7 +36,6 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
         {
             await LoadSurvivorsAsync();
             WeakReferenceMessenger.Default.Send("SURVIVORS LOADED");
-
         });
     }
 
@@ -50,29 +47,23 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
 
     private void SelectRandomTeam_Clicked(object sender, EventArgs e)
     {
+        SurvivorIndices = Enumerable.Range(0, Survivors.Count).ToList();
         RandomTeamString = "";
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 6; i++)
         {
             Random random = new Random();
-            int index = random.Next(Survivors.Count);
-            Survivor survivor = Survivors[index];
+            int index = random.Next(SurvivorIndices.Count);
+            Survivor survivor = Survivors[SurvivorIndices[index]];
             sb.Append($"{i + 1}: ");
             sb.Append($"[{Survivor.SurvivorClassNames[(int)survivor.ClassType]}] ");
             sb.Append(survivor.Name);
             sb.Append('\n');
-            Survivors.RemoveAt(index);
+            SurvivorIndices.RemoveAt(index);
         }
         RandomTeamString += sb.ToString();
         randomTeamLabel.SetBinding(Label.TextProperty, "RandomTeamString");
         Console.WriteLine($"[SurvivorSelectionRandomizerPage/SelectRandomTeam_Clicked] RandomTeamString: {RandomTeamString}");
-
-        Task.Run(async () =>
-        {
-            await LoadSurvivorsAsync();
-            WeakReferenceMessenger.Default.Send("SURVIVORS LOADED");
-
-        });
     }
 
     private async void MainPageButton_Clicked(object sender, EventArgs e)

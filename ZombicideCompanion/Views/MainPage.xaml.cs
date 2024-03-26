@@ -43,7 +43,7 @@ public partial class MainPage : ContentPage
         {
             Config = new ZoCoConfiguration();
         }
-        sb.AppendLine($"survivorspath={Config.SurvivorsPath}");
+        //sb.AppendLine($"survivorspath={Config.SurvivorsPath}");
         //await FileUtility.SaveFile(sb.ToString(), configFilePath);
     }
 
