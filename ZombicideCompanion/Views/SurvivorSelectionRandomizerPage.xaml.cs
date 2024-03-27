@@ -1,9 +1,8 @@
 using CommunityToolkit.Mvvm.Messaging;
+using System;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Text.RegularExpressions;
 using ZombicideCompanion.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ZombicideCompanion.Views;
 
@@ -12,6 +11,40 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
     public ObservableCollection<Survivor> Survivors { get; set; } = new ObservableCollection<Survivor>();
     public ObservableCollection<Survivor> RandomTeam { get; set; } = new ObservableCollection<Survivor>();
     public List<int> SurvivorIndices { get; set; } = default!;
+    private int _teamSize;
+    public int TeamSize 
+    { 
+        get
+        {
+            return _teamSize;
+        }        
+        set
+        {
+            int teamSizeLast = _teamSize;
+            _teamSize = Math.Clamp(value, 1,8);
+            teamSizeLabel.SetBinding(Label.TextProperty, "TeamSize");
+            if(_teamSize < teamSizeLast)
+            {
+                for(int i = _teamSize; i < teamSizeLast; i++)
+                {
+                    int indexSurvivors = Survivors.ToList().FindIndex(x => x.Name == RandomTeam[RandomTeam.Count - 1].Name);
+                    SurvivorIndices.Add(indexSurvivors);
+                    RandomTeam.RemoveAt(RandomTeam.Count - 1);
+                }
+            }
+            else if (_teamSize > teamSizeLast)
+            {
+                for (int i = teamSizeLast; i < _teamSize; i++)
+                {
+                    Random random = new Random();
+                    int index = random.Next(SurvivorIndices.Count);
+                    Survivor survivor = Survivors[SurvivorIndices[index]];
+                    RandomTeam.Add(survivor);
+                    SurvivorIndices.RemoveAt(index);
+                }
+            }
+        }
+    }
 
     private const string SurvivorsFileName = "survivors.txt";
     private const string EventSurvivorsLoaded = "SURVIVORS LOADED";
@@ -32,11 +65,15 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
         BindingContext = this;
 
         randomTeamListView.SetBinding(ListView.ItemsSourceProperty, "RandomTeam");
+        teamSizeLabel.SetBinding(Label.TextProperty, "TeamSize");
 
         Task.Run(async () =>
         {
             await LoadSurvivorsAsync();
             WeakReferenceMessenger.Default.Send(EventSurvivorsLoaded);
+            SurvivorIndices = Enumerable.Range(0, Survivors.Count).ToList();
+            TeamSize = 6;
+            RandomizeTeam();
         });
     }
 
@@ -48,20 +85,28 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
 
     private void RandomizeTeam_Clicked(object sender, EventArgs e)
     {
+        RandomizeTeam();
+    }
+
+    private void RandomizeTeam()
+    {
         SurvivorIndices = Enumerable.Range(0, Survivors.Count).ToList();
+        if (SurvivorIndices.Count == 0)
+        {
+            return;
+        }
         RandomTeam.Clear();
         Random random = new Random();
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < TeamSize; i++)
         {
             int index = random.Next(SurvivorIndices.Count);
             Survivor survivor = Survivors[SurvivorIndices[index]];
             RandomTeam.Add(survivor);
             SurvivorIndices.RemoveAt(index);
         }
-        //randomTeamLabel.SetBinding(Label.TextProperty, "RandomTeamString");
     }
 
-    public async Task LoadSurvivorsAsync()
+    private async Task LoadSurvivorsAsync()
     {
         //Console.WriteLine($"[SurvivorSelectionRandomizer/LoadSurvivors] SurvivorsPath: {MainPage.Config.SurvivorsPath}");
         string appDataDir = FileSystem.Current.AppDataDirectory;
@@ -71,13 +116,14 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
             Console.WriteLine("[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] survivorsString is null or empty.");
             return;
         }
-        List<Survivor> survivorList = new List<Survivor>();
+        //List<Survivor> survivorList = new List<Survivor>();
+        Survivors.Clear();
         string[] lines = survivorsString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] survivorsString lines.Length = {lines.Length}");
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i].Trim();
-            Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] line {i}: {line}");
+            //Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] line {i}: {line}");
             string name = line.Remove(line.Length - 1, 1).TrimEnd();
             string classString = line.Remove(0, line.Length - 2);
             SurvivorClassType suvClass = SurvivorClassType.Civilian;
@@ -86,13 +132,13 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
                 suvClass = (SurvivorClassType)classInt;
             }
 
-            survivorList.Add(new Survivor(name, suvClass));
-            Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] Added survivor: {name} {suvClass}");
+            Survivors.Add(new Survivor(name, suvClass));
+            //survivorList.Add(new Survivor(name, suvClass));
+            //Console.WriteLine($"[SurvivorSelectionRandomizerPage/LoadSurvivorsAsync] Added survivor: {name} {suvClass}");
         }
 
-        //Survivors = new ObservableCollection<Survivor>(survivorList.OrderBy(x => x.Name));
-        Survivors = new ObservableCollection<Survivor>(survivorList.OrderBy(x => Regex.Replace(x.Name, @"[^A-Za-z0-9]", "")));
-
+        Survivors = new ObservableCollection<Survivor>(Survivors.OrderBy(x => Regex.Replace(x.Name, @"[^A-Za-z0-9]", "")));
+        survivorsListView.SetBinding(ListView.ItemsSourceProperty, "Survivors");
         return;
     }
 
@@ -119,5 +165,36 @@ public partial class SurvivorSelectionRandomizerPage : ContentPage
         Console.WriteLine($"[SurvivorSelectionRandomizer/LoadSurvivors] Saved survivorsFile to \"{targetPath}\".");
 
         await LoadSurvivorsAsync();
+    }
+
+    private void ReselectSurvivorButton_Clicked(object sender, EventArgs e)
+    {
+        if(Survivors.Count <= SurvivorIndices.Count)
+        {
+            return;
+        }
+        Button button = (Button)sender;
+        Survivor survivorRemove = (Survivor)button.BindingContext;
+        int indexRandomTeam = RandomTeam.ToList().FindIndex(x => x.Name == survivorRemove.Name);
+        RandomTeam.RemoveAt(indexRandomTeam);
+
+        Random random = new Random();
+        int index = random.Next(SurvivorIndices.Count);
+        Survivor survivorNew = Survivors[SurvivorIndices[index]];
+        RandomTeam.Insert(indexRandomTeam, survivorNew);
+        SurvivorIndices.RemoveAt(index);
+
+        int indexSurvivors = Survivors.ToList().FindIndex(x => x.Name == survivorRemove.Name);
+        SurvivorIndices.Add(indexSurvivors);
+    }
+
+    public void TeamSizeIncreaseButton_Clicked(object sender, EventArgs e)
+    {
+        TeamSize++;
+    }
+
+    public void TeamSizeDecreaseButton_Clicked(object sender, EventArgs e)
+    {
+        TeamSize--;
     }
 }
