@@ -63,8 +63,14 @@
 	  <Compile Update="Views\MainPage.xaml.cs">
 	    <DependentUpon>MainPage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\SurvivorSelectionRandomizerPage.xaml.cs">
-	    <DependentUpon>SurvivorSelectionRandomizerPage.xaml</DependentUpon>
+	  <Compile Update="Views\SpawnCards\SpawnCardDrawerPage.xaml.cs">
+	    <DependentUpon>SpawnCardDrawerPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Survivors\SurvivorsConfigPage.xaml.cs">
+	    <DependentUpon>SurvivorsConfigPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Survivors\TeamPage.xaml.cs">
+	    <DependentUpon>TeamPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -72,7 +78,16 @@
 	  <MauiXaml Update="Views\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\SurvivorSelectionRandomizerPage.xaml">
+	  <MauiXaml Update="Views\SpawnCards\SpawnCardDrawerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\SpawnCards\SpawnCardsConfigPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Survivors\SurvivorsConfigPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Survivors\TeamPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

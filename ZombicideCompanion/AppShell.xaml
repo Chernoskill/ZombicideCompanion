@@ -4,22 +4,39 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:ZombicideCompanion.Views"
+	xmlns:survivors="clr-namespace:ZombicideCompanion.Views.Survivors"
+	xmlns:spawncards="clr-namespace:ZombicideCompanion.Views.SpawnCards"
     Shell.FlyoutBehavior="Disabled"
     Title="ZombicideCompanion">
 
 	<TabBar>
-		<Tab>
+		<Tab Title="Home">
 			<ShellContent
-            Title="Home"
-            ContentTemplate="{DataTemplate views:MainPage}"
-            Route="MainPage" />
+                Title="Home"
+                ContentTemplate="{DataTemplate views:MainPage}"
+                Route="MainPage" />
+		</Tab>
 
-			    <ShellContent
-            Title="Randomizer"
-            ContentTemplate="{DataTemplate views:SurvivorSelectionRandomizerPage}"
-            Route="SurvivorSelectionRandomizerPage" />  
+		<Tab Title="Survivors">
+			<ShellContent
+                Title="Team"
+                ContentTemplate="{DataTemplate survivors:TeamPage}"
+                Route="TeamPage" />
+			<ShellContent
+                Title="Survivors config"
+                ContentTemplate="{DataTemplate survivors:SurvivorsConfigPage}"
+                Route="SurvivorsConfigPage" /> 
 		</Tab>
 		
+		<Tab Title="Spawn cards">
+		     <ShellContent
+                Title="Draw spawn cards"
+                ContentTemplate="{DataTemplate spawncards:SpawnCardDrawerPage}"
+                Route="SpawnCardDrawerPage" />
+			<ShellContent
+                Title="Spawn cards config"
+                ContentTemplate="{DataTemplate spawncards:SpawnCardsConfigPage}"
+                Route="SpawnCardsConfigPage" />
+		</Tab>
 	</TabBar>
-
 </Shell>

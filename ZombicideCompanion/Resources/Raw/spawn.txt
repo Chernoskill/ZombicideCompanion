@@ -1,0 +1,25 @@
+1;0;Xeno-Brut: Arbeiter;;2;4;6;8
+2;0;Xeno-Brut: Arbeiter;;2;4;6;8
+3;0;Xeno-Brut: Arbeiter;;2;4;6;8
+4;0;Xeno-Brut: Arbeiter;;2;4;6;8
+5;0;Xeno-Brut: Arbeiter;;2;4;6;8
+6;0;Xeno-Brut: Arbeiter;;2;4;6;8
+7;0;Xeno-Brut: Berserker;;2;2;6;8
+8;0;Xeno-Brut: Berserker;;2;2;6;8
+9;0;Xeno-Brut: Berserker;;2;2;6;8
+10;0;Xeno-Brut: Berserker;;2;2;6;8
+11;0;Xeno-Brut: Jäger;;2;2;6;8
+12;0;Xeno-Brut: Jäger;;2;2;6;8
+13;0;Xeno-Brut: Jäger;;2;2;6;8
+14;0;Xeno-Brut: Jäger;;2;2;6;8
+15;0;Xeno-Brut: Jäger;;2;2;6;8
+16;1;Fauliges Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+17;1;Fauliges Monstrum!;SCHRITTE:<br>1. Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2. Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+18;1;Fauliges Monstrum!;SCHRITTE:<br>1. Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2. Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+19;1;Fauliges Monstrum!;SCHRITTE:<br>1. Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2. Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+20;1;Fauliges Monstrum!;SCHRITTE:<br>1. Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2. Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+21;1;Fauliges Monstrum!;SCHRITTE:<br>1. Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2. Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+22;2;Fäulnis-Brut: 1 Arbeiter!;Stelle 1 Arbeiter in jede aktive Fäulnis-Zone.;1
+23;2;Fäulnis-Brut: 2 Arbeiter!;Stelle 2 Arbeiter in jede aktive Fäulnis-Zone.;2
+24;2;Fäulnis-Brut: 1 Berserker!;Stelle 1 Berserker in jede aktive Fäulnis-Zone.;1
+25;2;Fäulnis-Brut: 1 Jäger!;Stelle 1 Jäger in jede aktive Fäulnis-Zone.;1

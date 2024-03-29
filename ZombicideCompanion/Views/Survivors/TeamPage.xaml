@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ZombicideCompanion.Views.SurvivorSelectionRandomizerPage"
-             Title="Survivor Selection Randomizer">
+             x:Class="ZombicideCompanion.Views.Survivors.TeamPage"
+             Title="Team">
 	<Grid RowSpacing="4">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="64" />
 			<RowDefinition Height="64" />
-			<RowDefinition Height="64" />
-			<RowDefinition Height="*" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<Button Grid.Row="0"
-			Text="Load from file"
-			Clicked="PickSurvivorFileButton_Clicked" 
-			FontSize="36"/>
-
-		<Grid Grid.Row="1">
+		<Grid Grid.Row="0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="64" />
@@ -39,12 +32,12 @@
 				FontSize="36"/>
 		</Grid>
 
-		<Button Grid.Row="2" 
+		<Button Grid.Row="1" 
 			Text="Randomize Team!" 
 			Clicked="RandomizeTeam_Clicked" 
 			FontSize="36"/>
 
-		<ListView Grid.Row="3" x:Name="randomTeamListView" SelectionMode="None">
+		<ListView Grid.Row="2" x:Name="randomTeamListView" SelectionMode="None">
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<ViewCell>
@@ -61,18 +54,6 @@
 							   WidthRequest="64" />
 							<Label Grid.Column="1" Text="{Binding Name}" FontSize="18" VerticalTextAlignment="Center"/>
 							<Button Grid.Column="2" Text="R" FontSize="18" Clicked="ReselectSurvivorButton_Clicked"/>
-						</Grid>
-					</ViewCell>
-				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
-
-		<ListView Grid.Row="4" x:Name="survivorsListView" SelectionMode="None" ItemsSource="{Binding Survivors}">
-			<ListView.ItemTemplate>
-				<DataTemplate>
-					<ViewCell>
-						<Grid Padding="10">
-							<Label Text="{Binding Name}" FontSize="18" VerticalTextAlignment="Center"/>
 						</Grid>
 					</ViewCell>
 				</DataTemplate>

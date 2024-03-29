@@ -1,6 +1,7 @@
-using CommunityToolkit.Mvvm.Messaging;
 using System.Text;
 using ZombicideCompanion.Models;
+using ZombicideCompanion.Views.SpawnCards;
+using ZombicideCompanion.Views.Survivors;
 
 namespace ZombicideCompanion.Views;
 
@@ -10,26 +11,11 @@ public partial class MainPage : ContentPage
 
     public MainPage()
     {
-        WeakReferenceMessenger.Default.Register<string>(this, (r, m) =>
+        Task.Run(async () =>
         {
-            Console.WriteLine($"EVENT {m}");
-            if (m == "DOWNLOAD COMPLETED")
-            {
-                Console.WriteLine("Event accepted.");
-            }
-
+            await SurvivorsConfigPage.LoadSurvivorsAsync();
+            await SpawnCardsConfigPage.LoadSpawnCardDataAsync();
         });
-
-        Console.WriteLine($"FileSystem.AppDataDirectory: {FileSystem.AppDataDirectory}");
-
-        //Task.Run(async () =>
-        //{
-        //    Console.WriteLine("Loading config");
-        //    await LoadConfigAsync();
-        //    Console.WriteLine("Loaded config");
-        //    WeakReferenceMessenger.Default.Send("DOWNLOAD COMPLETED");
-
-        //});
     }
 
     private static async Task SaveConfigAsync()
