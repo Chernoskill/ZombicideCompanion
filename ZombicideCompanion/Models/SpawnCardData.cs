@@ -1,4 +1,6 @@
-﻿namespace ZombicideCompanion.Models
+﻿using System.Text;
+
+namespace ZombicideCompanion.Models
 {
     public class SpawnCardData
     {
@@ -6,6 +8,7 @@
         public SpawnCardDataType Type { get; set; } = SpawnCardDataType.Normal;
         public string Title { get; set; } = default!;
         public string Text { get; set; } = default!;
+
         public int[] SpawnAmounts { get; set; } = default!;
         public string[] Activations { get; set; } = default!;
         public bool Include { get; set; } = true;

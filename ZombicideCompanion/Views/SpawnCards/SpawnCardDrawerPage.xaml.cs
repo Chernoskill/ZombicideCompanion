@@ -148,7 +148,8 @@ public partial class SpawnCardDrawerPage : ContentPage
         {
             return;
         }
-        SpawnCardDrawnTitleLabel.Text = SpawnCardDrawn.Title.ToUpper();
+        SpawnCardDrawnTitleLabel.Text = SpawnCardDrawn.Title;
+        SpawnCardDrawnTitleLabel.TextTransform = TextTransform.Uppercase;
 
         foreach (View control in _controls)
         {
@@ -200,16 +201,10 @@ public partial class SpawnCardDrawerPage : ContentPage
         }
         if (string.IsNullOrEmpty(SpawnCardDrawn.Text) == false)
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (string line in SpawnCardDrawn.Text.Split("<br>"))
-            {
-                sb.Append($"{line}\n");
-            }
-
             Label label = new Label
             {
                 Parent = RootLayout,
-                Text = sb.ToString(),
+                Text = SpawnCardDrawn.Text,
                 FontSize = 18
             };
             RootLayout.Add(label);

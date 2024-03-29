@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 using ZombicideCompanion.Models;
 
 namespace ZombicideCompanion.Views.Survivors;
@@ -10,20 +9,20 @@ public partial class TeamPage : ContentPage
     public ObservableCollection<Survivor> RandomTeam { get; set; } = new ObservableCollection<Survivor>();
     public List<int> SurvivorIndices { get; set; } = default!;
     private int _teamSize;
-    public int TeamSize 
-    { 
+    public int TeamSize
+    {
         get
         {
             return _teamSize;
-        }        
+        }
         set
         {
             int teamSizeLast = _teamSize;
-            _teamSize = Math.Clamp(value, 1,8);
+            _teamSize = Math.Clamp(value, 1, 8);
             teamSizeLabel.SetBinding(Label.TextProperty, "TeamSize");
-            if(_teamSize < teamSizeLast)
+            if (_teamSize < teamSizeLast)
             {
-                for(int i = _teamSize; i < teamSizeLast; i++)
+                for (int i = _teamSize; i < teamSizeLast; i++)
                 {
                     int indexSurvivors = SurvivorsConfigPage.Survivors.ToList().FindIndex(x => x.Name == RandomTeam[RandomTeam.Count - 1].Name);
                     SurvivorIndices.Add(indexSurvivors);
@@ -51,7 +50,7 @@ public partial class TeamPage : ContentPage
             Console.WriteLine($"{GetType()} EVENT {m}");
             if (m == SurvivorsConfigPage.EventSurvivorsLoaded)
             {
-               
+
             }
         });
 
@@ -89,16 +88,14 @@ public partial class TeamPage : ContentPage
             SurvivorIndices.RemoveAt(index);
         }
     }
-   
-    private void ReselectSurvivorButton_Clicked(object sender, EventArgs e)
+
+    private void ReselectSurvivor(Survivor survivor)
     {
-        if(SurvivorsConfigPage.Survivors.Count <= SurvivorIndices.Count)
+        if (SurvivorsConfigPage.Survivors.Count <= SurvivorIndices.Count)
         {
             return;
         }
-        Button button = (Button)sender;
-        Survivor survivorRemove = (Survivor)button.BindingContext;
-        int indexRandomTeam = RandomTeam.ToList().FindIndex(x => x.Name == survivorRemove.Name);
+        int indexRandomTeam = RandomTeam.ToList().FindIndex(x => x.Name == survivor.Name);
         RandomTeam.RemoveAt(indexRandomTeam);
 
         Random random = new Random();
@@ -107,7 +104,7 @@ public partial class TeamPage : ContentPage
         RandomTeam.Insert(indexRandomTeam, survivorNew);
         SurvivorIndices.RemoveAt(index);
 
-        int indexSurvivors = SurvivorsConfigPage.Survivors.ToList().FindIndex(x => x.Name == survivorRemove.Name);
+        int indexSurvivors = SurvivorsConfigPage.Survivors.ToList().FindIndex(x => x.Name == survivor.Name);
         SurvivorIndices.Add(indexSurvivors);
     }
 
@@ -119,5 +116,15 @@ public partial class TeamPage : ContentPage
     public void TeamSizeDecreaseButton_Clicked(object sender, EventArgs e)
     {
         TeamSize--;
+    }
+
+    public void TeamMemberTapped(object o, ItemTappedEventArgs e)
+    {
+        Survivor? survivor = e.Item as Survivor;
+        if (survivor == null)
+        {
+            return;
+        }
+        ReselectSurvivor(survivor!);
     }
 }

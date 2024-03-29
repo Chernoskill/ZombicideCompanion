@@ -1,45 +1,108 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="ZombicideCompanion.Views.SpawnCards.SpawnCardsConfigPage"
-             Title="Spawn cards config">
+             Title="Spawn cards config"
+			 xmlns:local="clr-namespace:ZombicideCompanion.Views.SpawnCards">
+	
+	<ContentPage.Resources>
+		<local:ColorChangedConverter x:Key="colorChangedConverter" />
+	</ContentPage.Resources>
+
 	<Grid RowSpacing="4">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<ListView Grid.Row="0" x:Name="SpawnCardsListView" SelectionMode="None">
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Label Grid.Row="0" Grid.Column="0" Text="Karten insgesamt" FontAttributes="Bold"/>
+			<Label Grid.Row="0" Grid.Column="1" Text="{Binding SpawnCardsCount}" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+			<Label Grid.Row="0" Grid.Column="2" HorizontalTextAlignment="Center" FontAttributes="Bold">
+				<Label.FormattedText>
+					<FormattedString>
+						<Span Text="100"/>
+						<Span Text="%"/>
+					</FormattedString>
+				</Label.FormattedText>
+			</Label> 
+			<Label Grid.Row="1" Grid.Column="0" Text="Xeno-Brut"/>
+			<Label Grid.Row="1" Grid.Column="1" Text="{Binding SpawnCardsCountNormal}" HorizontalTextAlignment="Center"/>
+			<Label Grid.Row="1" Grid.Column="2" HorizontalTextAlignment="Center">
+				<Label.FormattedText>
+					<FormattedString>
+						<Span Text="{Binding SpawnCardsRatioNormal}"/>
+						<Span Text="%"/>
+					</FormattedString>
+				</Label.FormattedText>
+			</Label>
+			<Label Grid.Row="2" Grid.Column="0" Text="Fäulnis"/>
+			<Label Grid.Row="2" Grid.Column="1" Text="{Binding SpawnCardsCountMold}" HorizontalTextAlignment="Center"/>
+			<Label Grid.Row="2" Grid.Column="2" HorizontalTextAlignment="Center">
+				<Label.FormattedText>
+					<FormattedString>
+						<Span Text="{Binding SpawnCardsRatioMold}"/>
+						<Span Text="%"/>
+					</FormattedString>
+				</Label.FormattedText>
+			</Label>
+			<Label Grid.Row="3" Grid.Column="0" Text="Monstrum"/>
+			<Label Grid.Row="3" Grid.Column="1" Text="{Binding SpawnCardsCountAbomination}" HorizontalTextAlignment="Center"/>
+			<Label Grid.Row="3" Grid.Column="2" HorizontalTextAlignment="Center">
+				<Label.FormattedText>
+					<FormattedString>
+						<Span Text="{Binding SpawnCardsRatioAbomination}"/>
+						<Span Text="%"/>
+					</FormattedString>
+				</Label.FormattedText>
+			</Label>
+			<Label Grid.Row="4" Grid.Column="0" Text="Extra-Aktivierung"/>
+			<Label Grid.Row="4" Grid.Column="1" Text="{Binding SpawnCardsCountExtraActivation}" HorizontalTextAlignment="Center"/>
+			<Label Grid.Row="4" Grid.Column="2" HorizontalTextAlignment="Center">
+				<Label.FormattedText>
+					<FormattedString>
+						<Span Text="{Binding SpawnCardsRatioExtraActivation}"/>
+						<Span Text="%"/>
+					</FormattedString>
+				</Label.FormattedText>
+			</Label>
+		</Grid>
+		
+		<ListView Grid.Row="1" x:Name="SpawnCardsListView" SelectionMode="None" ItemTapped="SpawnCardTapped" HasUnevenRows="True" Header="Spawn cards">
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<ViewCell>
+						<!--<Grid Padding="10" BackgroundColor="{Binding Include,Converter={StaticResource colorChangedConverter}}">-->
 						<Grid Padding="10">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="36" />
-							</Grid.ColumnDefinitions>
 							<Grid.RowDefinitions>
-								<RowDefinition Height="*" />
-								<RowDefinition Height="*" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
-							<Label Grid.Column="0" Grid.Row="0" x:Name="CardNumberLabel" Text="{Binding CardNumber}"/>
-							<Label Grid.Column="0" Grid.Row="1" x:Name="CardTitleLabel" Text="{Binding Title}"/>
-
-							<!--<Grid Padding="10" Grid.Column="0" Grid.Row="0">
+							
+							<Grid Padding="10" Grid.Row="0">
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="32" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<Label Grid.Column="0" x:Name="CardNumberLabel" Text="{Binding CardNumber}" FontSize="18"/>
-								<Label Grid.Column="1" x:Name="CardTitleLabel" Text="{Binding Title}" FontSize="18"/>
+								<Label Grid.Column="0" x:Name="CardNumberLabel" Text="{Binding CardNumber}" FontSize="18" BackgroundColor="{Binding Include,Converter={StaticResource colorChangedConverter}}" />
+								<Label Grid.Column="1" x:Name="CardTitleLabel" Text="{Binding Title}" FontSize="18" TextTransform="Uppercase" IsEnabled="{Binding Include}"/>
 							</Grid>
-							<Grid Padding="10" Grid.Column="0" Grid.Row="1">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="*" />
-								</Grid.ColumnDefinitions>
-								<Label Grid.Column="0" x:Name="CardTypeLabel" Text="{Binding TypeText}" FontSize="18"/>
-								<Label Grid.Column="1" x:Name="CardTextLabel" Text="{Binding Text}" MaxLines="1" FontSize="18"/>
-							</Grid>-->
+							<Label Grid.Row="1" x:Name="CardTypeLabel" Text="{Binding TypeText}" FontSize="18"/>
+							<Label Grid.Row="2" x:Name="CardTextLabel" Text="{Binding Text}" FontSize="18" TextType="Html" />
 						</Grid>
 					</ViewCell>
 				</DataTemplate>

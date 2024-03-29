@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
+using System.Text;
 using ZombicideCompanion.Models;
 
 namespace ZombicideCompanion.Views.SpawnCards;
@@ -8,10 +9,23 @@ public partial class SpawnCardsConfigPage : ContentPage
 {
     public static ObservableCollection<SpawnCardData> SpawnCards { get; set; } = new ObservableCollection<SpawnCardData>();
     public ObservableCollection<SpawnCardData> SpawnCardsLocal => SpawnCards;
+    public static Color CardBackgroundEnabled = new Color(96, 0, 255);
+    public static Color CardBackgroundDisabled = new Color(66, 0, 176);
+    public int SpawnCardsCount => SpawnCards.Count();
+    public int SpawnCardsCountNormal => SpawnCards.Where(x => x.Type == SpawnCardDataType.Normal).Count();
+    public int SpawnCardsCountMold => SpawnCards.Where(x => x.Type == SpawnCardDataType.Mold).Count();
+    public int SpawnCardsCountAbomination => SpawnCards.Where(x => x.Type == SpawnCardDataType.Abomination).Count();
+    public int SpawnCardsCountExtraActivation => SpawnCards.Where(x => x.Type == SpawnCardDataType.ExtraActivation).Count();
+
+    public double SpawnCardsRatioNormal => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.Normal).Count() / SpawnCards.Count() * 100, 2);
+    public double SpawnCardsRatioMold => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.Mold).Count() / SpawnCards.Count() * 100, 2);
+    public double SpawnCardsRatioAbomination => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.Abomination).Count() / SpawnCards.Count() * 100, 2);
+    public double SpawnCardsRatioExtraActivation => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.ExtraActivation).Count() / SpawnCards.Count() * 100, 2);
+    
+    public static string EventSpawnCardDataLoaded = "SPAWN CARD DATA LOADED";
 
     private const string SpawnFileName = "spawn.txt";
-    public static string EventSpawnCardDataLoaded = "SPAWN CARD DATA LOADED";
-    private static Dictionary<SpawnCardDataType,string> SpawnCardDataTypeStrings { get; set; } = new Dictionary<SpawnCardDataType, string>() 
+    private static Dictionary<SpawnCardDataType, string> SpawnCardDataTypeStrings { get; set; } = new Dictionary<SpawnCardDataType, string>()
     {
         { SpawnCardDataType.Normal, "Xeno-Brut" },
         { SpawnCardDataType.Abomination, "Monstrum" },
@@ -20,7 +34,7 @@ public partial class SpawnCardsConfigPage : ContentPage
     };
 
     public SpawnCardsConfigPage()
-	{
+    {
         WeakReferenceMessenger.Default.Register<string>(this, (r, m) =>
         {
             Console.WriteLine($"{GetType()} EVENT {m}");
@@ -71,6 +85,18 @@ public partial class SpawnCardsConfigPage : ContentPage
             card.Title = parts[2];
 
             //Text
+
+            //StringBuilder sb = new StringBuilder();
+            //string[] textlines = parts[3].Split("<br>");
+            //for (int textlineIndex = 0; textlineIndex < textlines.Length; textlineIndex++)
+            //{
+            //    sb.Append(textlines[textlineIndex]);
+            //    if (textlineIndex < textlines.Length - 1)
+            //    {
+            //        sb.Append('\n');
+            //    }
+            //}
+            //card.Text = sb.ToString();
             card.Text = parts[3];
 
             //SpawnAmount
@@ -100,15 +126,26 @@ public partial class SpawnCardsConfigPage : ContentPage
 
     private void AddControls()
     {
-        if(SpawnCards == null)
+        if (SpawnCards == null)
         {
             return;
         }
 
-        foreach(SpawnCardData card in SpawnCards)
+        foreach (SpawnCardData card in SpawnCards)
         {
 
         }
     }
 
+    public void SpawnCardTapped(object o, ItemTappedEventArgs e)
+    {
+        //int index = e.ItemIndex;
+        SpawnCardData? card = e.Item as SpawnCardData;
+        if (card == null)
+        {
+            return;
+        }
+        card.Include = !card.Include;
+        Console.WriteLine($"[SpawnCardsConfigPage/SpawnCardTapped] {card.CardNumber}: {card.Title} Include: {card.Include}");
+    }
 }

@@ -7,7 +7,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
-		<ListView x:Name="SurvivorsListView" SelectionMode="None">
+		<ListView x:Name="SurvivorsListView" SelectionMode="None" Header="Survivors">
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<ViewCell>
