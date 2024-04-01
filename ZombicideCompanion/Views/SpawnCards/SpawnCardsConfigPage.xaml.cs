@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using System.Text;
 using ZombicideCompanion.Models;
 
 namespace ZombicideCompanion.Views.SpawnCards;
@@ -9,19 +8,19 @@ public partial class SpawnCardsConfigPage : ContentPage
 {
     public static ObservableCollection<SpawnCardData> SpawnCards { get; set; } = new ObservableCollection<SpawnCardData>();
     public ObservableCollection<SpawnCardData> SpawnCardsLocal => SpawnCards;
-    public static Color CardBackgroundEnabled = new Color(96, 0, 255);
-    public static Color CardBackgroundDisabled = new Color(66, 0, 176);
-    public int SpawnCardsCount => SpawnCards.Count();
-    public int SpawnCardsCountNormal => SpawnCards.Where(x => x.Type == SpawnCardDataType.Normal).Count();
-    public int SpawnCardsCountMold => SpawnCards.Where(x => x.Type == SpawnCardDataType.Mold).Count();
-    public int SpawnCardsCountAbomination => SpawnCards.Where(x => x.Type == SpawnCardDataType.Abomination).Count();
-    public int SpawnCardsCountExtraActivation => SpawnCards.Where(x => x.Type == SpawnCardDataType.ExtraActivation).Count();
+    public static Color CardBackgroundEnabled = new Color(0, 0, 255);
+    public static Color CardBackgroundDisabled = new Color(255, 0, 0);
+    public int SpawnCardsCount => SpawnCards.Where(x => x.Include).Count();
+    public int SpawnCardsCountNormal => SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Normal).Count();
+    public int SpawnCardsCountMold => SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Mold).Count();
+    public int SpawnCardsCountAbomination => SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Abomination).Count();
+    public int SpawnCardsCountExtraActivation => SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.ExtraActivation).Count();
 
-    public double SpawnCardsRatioNormal => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.Normal).Count() / SpawnCards.Count() * 100, 2);
-    public double SpawnCardsRatioMold => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.Mold).Count() / SpawnCards.Count() * 100, 2);
-    public double SpawnCardsRatioAbomination => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.Abomination).Count() / SpawnCards.Count() * 100, 2);
-    public double SpawnCardsRatioExtraActivation => Math.Round((double)SpawnCards.Where(x => x.Type == SpawnCardDataType.ExtraActivation).Count() / SpawnCards.Count() * 100, 2);
-    
+    public double SpawnCardsRatioNormal => Math.Round((double)SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Normal).Count() / SpawnCardsCount * 100, 2);
+    public double SpawnCardsRatioMold => Math.Round((double)SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Mold).Count() / SpawnCardsCount * 100, 2);
+    public double SpawnCardsRatioAbomination => Math.Round((double)SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Abomination).Count() / SpawnCardsCount * 100, 2);
+    public double SpawnCardsRatioExtraActivation => Math.Round((double)SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.ExtraActivation).Count() / SpawnCardsCount * 100, 2);
+
     public static string EventSpawnCardDataLoaded = "SPAWN CARD DATA LOADED";
 
     private const string SpawnFileName = "spawn.txt";
@@ -85,18 +84,6 @@ public partial class SpawnCardsConfigPage : ContentPage
             card.Title = parts[2];
 
             //Text
-
-            //StringBuilder sb = new StringBuilder();
-            //string[] textlines = parts[3].Split("<br>");
-            //for (int textlineIndex = 0; textlineIndex < textlines.Length; textlineIndex++)
-            //{
-            //    sb.Append(textlines[textlineIndex]);
-            //    if (textlineIndex < textlines.Length - 1)
-            //    {
-            //        sb.Append('\n');
-            //    }
-            //}
-            //card.Text = sb.ToString();
             card.Text = parts[3];
 
             //SpawnAmount
@@ -124,28 +111,32 @@ public partial class SpawnCardsConfigPage : ContentPage
         WeakReferenceMessenger.Default.Send(EventSpawnCardDataLoaded);
     }
 
-    private void AddControls()
-    {
-        if (SpawnCards == null)
-        {
-            return;
-        }
-
-        foreach (SpawnCardData card in SpawnCards)
-        {
-
-        }
-    }
-
     public void SpawnCardTapped(object o, ItemTappedEventArgs e)
     {
-        //int index = e.ItemIndex;
         SpawnCardData? card = e.Item as SpawnCardData;
         if (card == null)
         {
             return;
         }
         card.Include = !card.Include;
-        Console.WriteLine($"[SpawnCardsConfigPage/SpawnCardTapped] {card.CardNumber}: {card.Title} Include: {card.Include}");
+        card.Color = card.Include ? SpawnCardsConfigPage.CardBackgroundEnabled : SpawnCardsConfigPage.CardBackgroundDisabled;
+    }
+
+    void OnCardIncludeCheckBoxCheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        CheckBox checkBox = (CheckBox)sender!;
+        SpawnCardData card = (SpawnCardData)checkBox.BindingContext;
+        (checkBox.Parent as Grid)!.BackgroundColor = card.Include ? SpawnCardsConfigPage.CardBackgroundEnabled : SpawnCardsConfigPage.CardBackgroundDisabled;
+
+        SpawnCardsCountLabel.SetBinding(Label.TextProperty, "SpawnCardsCount");
+        SpawnCardsCountNormalLabel.SetBinding(Label.TextProperty, "SpawnCardsCountNormal");
+        SpawnCardsCountMoldLabel.SetBinding(Label.TextProperty, "SpawnCardsCountMold");
+        SpawnCardsCountAbominationLabel.SetBinding(Label.TextProperty, "SpawnCardsCountAbomination");
+        SpawnCardsCountExtraActivationLabel.SetBinding(Label.TextProperty, "SpawnCardsCountExtraActivation");
+
+        SpawnCardsRatioNormalLabel.SetBinding(Label.TextProperty, "SpawnCardsRatioNormal");
+        SpawnCardsRatioMoldLabel.SetBinding(Label.TextProperty, "SpawnCardsRatioMold");
+        SpawnCardsRatioAbominationLabel.SetBinding(Label.TextProperty, "SpawnCardsRatioAbomination");
+        SpawnCardsRatioExtraActivationLabel.SetBinding(Label.TextProperty, "SpawnCardsRatioExtraActivation");
     }
 }
