@@ -1,15 +1,28 @@
 using CommunityToolkit.Mvvm.Messaging;
-using System.Collections.ObjectModel;
-using System.Text;
 using ZombicideCompanion.Models;
 
 namespace ZombicideCompanion.Views.SpawnCards;
 
 public partial class SpawnCardDrawerPage : ContentPage
 {
-    //public ObservableCollection<SpawnCardData> SpawnCards { get; set; } = new ObservableCollection<SpawnCardData>();
-    public List<int> SpawnCardIndices { get; set; } = default!;
+    public List<int> SpawnCardIndices { get; set; } = new List<int>();
+    private int _spawnCardIndicesCount;
+    public int SpawnCardIndicesCount
+    {
+        get
+        {
+            return _spawnCardIndicesCount;
+        }
+        set
+        {
+            _spawnCardIndicesCount = value;
+        }
+    }
+    public List<SpawnCardData> SpawnCardsIncluded = new List<SpawnCardData>();
+
     public SpawnCardData? SpawnCardDrawn { get; set; } = default!;
+    private List<int> SpawnCardIndicesDrawn { get; set; } = new List<int>();
+    public int SpawnCardIndex { get; set; }
     private DangerLevel _dangerLevel;
     public DangerLevel DangerLevel
     {
@@ -30,93 +43,26 @@ public partial class SpawnCardDrawerPage : ContentPage
         }
     }
     private string[] DangerLevelStrings { get; set; } = ["Blau", "Gelb", "Orange", "Rot"];
-    //private const string SpawnFileName = "spawn.txt";
     private Color[] DangerLevelColors = [new Color(0, 0, 255), new Color(255, 208, 0), new Color(255, 128, 0), new Color(255, 0, 0)];
-    //private string EventSpawnCardDataLoaded = "SPAWN CARD DATA LOADED";
     private List<View> _controls = new List<View>();
 
     public SpawnCardDrawerPage()
     {
-        //WeakReferenceMessenger.Default.Register<string>(this, (r, m) =>
-        //{
-        //    Console.WriteLine($"EVENT {m}");
-        //    if (m == EventSpawnCardDataLoaded)
-        //    {
-
-        //    }
-        //});
+        WeakReferenceMessenger.Default.Register<string>(this, (r, m) =>
+        {
+            Console.WriteLine($"{GetType()} EVENT {m}");
+            if (m == SpawnCardsConfigPage.EventSpawnCardIncludeChanged)
+            {
+                ShuffleSpawnCards();
+            }
+        });
 
         InitializeComponent();
 
         BindingContext = this;
 
         DangerLevel = DangerLevel.Blue;
-
-        //Task.Run(async () =>
-        //{
-        //    await LoadSpawnCardDataAsync();
-        //    WeakReferenceMessenger.Default.Send(EventSpawnCardDataLoaded);
-        //});
     }
-
-    //private async Task LoadSpawnCardDataAsync()
-    //{
-    //    using Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(SpawnFileName);
-    //    using StreamReader reader = new StreamReader(fileStream);
-    //    string spawnCardDataString = await reader.ReadToEndAsync();
-
-    //    SpawnCards.Clear();
-    //    string[] lines = spawnCardDataString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-    //    for (int i = 0; i < lines.Length; i++)
-    //    {
-    //        string line = lines[i].Trim();
-    //        string[] parts = line.Split(';');
-    //        SpawnCardData card = new SpawnCardData();
-
-    //        //CardNumber
-    //        if (int.TryParse(parts[0], out int cardNumber) == false)
-    //        {
-    //            Console.WriteLine($"[SpawnHandlerPage/LoadSpawnCardDataAsync] Could not parse CardNumber: \"{parts[0]}\"");
-    //            continue;
-    //        }
-    //        card.CardNumber = cardNumber;
-
-    //        //Type
-    //        if (int.TryParse(parts[1], out int type) == false)
-    //        {
-    //            Console.WriteLine($"[SpawnHandlerPage/LoadSpawnCardDataAsync] Could not parse Type: \"{parts[1]}\"");
-    //            continue;
-    //        }
-    //        card.Type = (SpawnCardDataType)type;
-
-    //        //Title
-    //        card.Title = parts[2];
-
-    //        //Text
-    //        card.Text = parts[3];
-
-    //        //SpawnAmount
-    //        switch (card.Type)
-    //        {
-    //            case SpawnCardDataType.Normal:
-    //                {
-    //                    card.SpawnAmounts = [int.Parse(parts[4]), int.Parse(parts[5]), int.Parse(parts[6]), int.Parse(parts[7])];
-    //                    break;
-    //                }
-    //            case SpawnCardDataType.Mold:
-    //                {
-    //                    card.SpawnAmounts = [int.Parse(parts[4])];
-    //                    break;
-    //                }
-    //            case SpawnCardDataType.ExtraActivation:
-    //                {
-    //                    card.Activations = [parts[4], parts[5], parts[6], parts[7]];
-    //                    break;
-    //                }
-    //        }
-    //        SpawnCards.Add(card);
-    //    }
-    //}
 
     private void DrawSpawnCardButton_Clicked(object sender, EventArgs e)
     {
@@ -125,21 +71,71 @@ public partial class SpawnCardDrawerPage : ContentPage
 
     private void DrawSpawnCard()
     {
-        if(SpawnCardsConfigPage.SpawnCards == null || SpawnCardsConfigPage.SpawnCards.Count == 0)
+        if (SpawnCardsConfigPage.SpawnCards == null || SpawnCardsConfigPage.SpawnCards.Count == 0)
         {
             return;
         }
-        if (SpawnCardIndices == null || SpawnCardIndices.Count == 0)
-        {
-            SpawnCardIndices = Enumerable.Range(0, SpawnCardsConfigPage.SpawnCards.Count).ToList();
-        }
-        Random random = new Random();
-        int index = random.Next(SpawnCardIndices.Count);
-        SpawnCardData spawnCard = SpawnCardsConfigPage.SpawnCards[SpawnCardIndices[index]];
-        SpawnCardDrawn = spawnCard;
-        SpawnCardIndices.RemoveAt(index);
 
+        if (SpawnCardIndices.Count == 0)
+        {
+            ShuffleSpawnCards();
+        }
+        int index = SpawnCardIndices[SpawnCardIndices.Count - 1];
+        SpawnCardData spawnCard = SpawnCardsIncluded[index];
+
+        SpawnCardDrawn = spawnCard;
+        SpawnCardIndices.RemoveAt(SpawnCardIndices.Count - 1);
+        SpawnCardIndicesCount = SpawnCardIndices.Count;
+        SpawnCardIndicesDrawn.Add(index);
+        SpawnCardIndicesDrawn.RemoveAt(0);
         SetupSpawnCardElements();
+    }
+
+    private void ShuffleSpawnCards()
+    {
+        SpawnCardsIncluded = SpawnCardsConfigPage.SpawnCards.Where(x => x.Include).ToList();
+        List<int> spawnCardIndexPool = Enumerable.Range(0, SpawnCardsIncluded.Count).ToList();
+        SpawnCardIndices.Clear();
+        SpawnCardDataType cardTypeLast = SpawnCardDataType.Normal;
+        int tries = 0;
+        Random random = new Random();
+
+        int abominationCount = SpawnCardsIncluded.Where(x => x.Type == SpawnCardDataType.Abomination).Count();
+        int extraActivationCount = SpawnCardsIncluded.Where(x => x.Type == SpawnCardDataType.ExtraActivation).Count();
+        bool preventDoubleAbominations = SpawnCardsIncluded.Count - abominationCount >= abominationCount * 2;
+        bool preventDoubleExtraActivations = SpawnCardsIncluded.Count - extraActivationCount >= extraActivationCount * 2;
+
+        //Console.WriteLine($"preventDoubleAbominations: {preventDoubleAbominations}, preventDoubleExtraActivations: {preventDoubleExtraActivations}");
+
+        while (spawnCardIndexPool.Count > 0)
+        {
+            int index = random.Next(spawnCardIndexPool.Count);
+            SpawnCardData spawnCard = SpawnCardsIncluded[spawnCardIndexPool[index]];
+            //Console.WriteLine($"spawnCard.Type = {spawnCard.Type}, cardTypeLast: {cardTypeLast}");
+            if ((preventDoubleAbominations && spawnCard.Type == SpawnCardDataType.Abomination && spawnCard.Type == cardTypeLast) || (preventDoubleExtraActivations && spawnCard.Type == SpawnCardDataType.ExtraActivation && spawnCard.Type == cardTypeLast))
+            {
+                //Console.WriteLine($"tries: {tries}");
+                tries++;
+                if (tries >= SpawnCardIndices.Count)
+                {
+                    //Console.WriteLine($"tries >= SpawnCardIndices.Count, shuffling cards.");
+                    ShuffleSpawnCards();
+                    return;
+                }
+                continue;
+            }
+            SpawnCardIndices.Add(spawnCardIndexPool[index]);
+            spawnCardIndexPool.RemoveAt(index);
+            cardTypeLast = spawnCard.Type;
+            tries = 0;
+        }
+
+        //for (int i = 0; i < SpawnCardIndices.Count; i++)
+        //{
+        //    Console.WriteLine($"{i}: {SpawnCardsIncluded[SpawnCardIndices[i]].CardNumber} {SpawnCardsIncluded[SpawnCardIndices[i]].Title}");
+        //}
+
+        SpawnCardIndicesCount = SpawnCardIndices.Count;
     }
 
     private void SetupSpawnCardElements()
@@ -205,7 +201,8 @@ public partial class SpawnCardDrawerPage : ContentPage
             {
                 Parent = RootLayout,
                 Text = SpawnCardDrawn.Text,
-                FontSize = 18
+                FontSize = 18,
+                TextType = TextType.Html
             };
             RootLayout.Add(label);
             _controls.Add(label);
@@ -220,5 +217,10 @@ public partial class SpawnCardDrawerPage : ContentPage
     public void DangerLevelDecreaseButton_Clicked(object sender, EventArgs e)
     {
         DangerLevel--;
+    }
+
+    public void ShuffleSpawnCardsButton_Clicked(object sender, EventArgs e)
+    {
+        ShuffleSpawnCards();
     }
 }

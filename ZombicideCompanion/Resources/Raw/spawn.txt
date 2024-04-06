@@ -1,3 +1,4 @@
+//Invader: Basis
 1;0;Xeno-Brut: Arbeiter;;2;4;6;8
 2;0;Xeno-Brut: Arbeiter;;2;4;6;8
 3;0;Xeno-Brut: Arbeiter;;2;4;6;8
@@ -23,3 +24,55 @@
 23;2;Fäulnis-Brut: 2 Arbeiter!;Stelle 2 Arbeiter in jede aktive Fäulnis-Zone.;2
 24;2;Fäulnis-Brut: 1 Berserker!;Stelle 1 Berserker in jede aktive Fäulnis-Zone.;1
 25;2;Fäulnis-Brut: 1 Jäger!;Stelle 1 Jäger in jede aktive Fäulnis-Zone.;1
+//Invader: Veteran
+26;0;Xeno-Brut: Arbeiter;;4;6;8;10
+27;0;Xeno-Brut: Arbeiter;;4;6;8;10
+28;0;Xeno-Brut: Arbeiter;;4;6;8;10
+29;0;Xeno-Brut: Arbeiter;;4;6;8;10
+30;0;Xeno-Brut: Arbeiter;;4;6;8;10
+31;0;Xeno-Brut: Arbeiter;;4;6;8;10
+32;0;Xeno-Brut: Berserker;;4;4;6;8
+33;0;Xeno-Brut: Berserker;;4;4;6;8
+34;0;Xeno-Brut: Berserker;;4;4;6;8
+35;0;Xeno-Brut: Berserker;;4;4;6;8
+36;0;Xeno-Brut: Jäger;;4;4;6;8
+37;0;Xeno-Brut: Jäger;;4;4;6;8
+38;0;Xeno-Brut: Jäger;;4;4;6;8
+39;0;Xeno-Brut: Jäger;;4;4;6;8
+40;0;Xeno-Brut: Jäger;;4;4;6;8
+41;1;Fauliges Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+42;1;Fauliges Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+43;1;Fauliges Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+44;1;Fauliges Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+45;1;Fauliges Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+46;1;Fauliges Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Fauliges Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+47;2;Fäulnis-Brut: 1 Arbeiter!;Stelle 1 Arbeiter in jede aktive Fäulnis-Zone.;1
+47;2;Fäulnis-Brut: 2 Arbeiter!;Stelle 2 Arbeiter in jede aktive Fäulnis-Zone.;2
+49;2;Fäulnis-Brut: 1 Berserker!;Stelle 1 Berserker in jede aktive Fäulnis-Zone.;1
+50;2;Fäulnis-Brut: 1 Jäger!;Stelle 1 Jäger in jede aktive Fäulnis-Zone.;1
+//Invader: Überraschung
+51;3;Eine Extra-Aktivierung;;Keine;Alle Arbeiter;Alle Arbeiter;Alle Arbeiter
+52;3;Eine Extra-Aktivierung;;Keine;Alle Arbeiter;Alle Arbeiter;Alle Arbeiter
+53;3;Eine Extra-Aktivierung;;Keine;Alle Berserker;Alle Berserker;Alle Berserker
+54;3;Eine Extra-Aktivierung;;Keine;Alle Jäger;Alle Jäger;Alle Jäger
+//Black Ops
+55;1;Moloch-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Moloch-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+56;1;Moloch-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Moloch-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+57;1;Moloch-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Moloch-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+58;1;Moloch-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Moloch-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+59;1;Moloch-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Moloch-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+60;1;Moloch-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Moloch-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+//Civilian Pack
+121;1;Babyface-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Babyface-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+122;1;Babyface-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Babyface-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+123;1;Babyface-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Babyface-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+124;1;Babyface-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Babyface-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+//Iron Maiden Pack #1
+121;1;Cyborg-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Cyborg-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+122;1;Cyborg-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Cyborg-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+123;1;Cyborg-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Cyborg-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+124;1;Cyborg-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Cyborg-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+125;1;Samurai-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Samurai-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+126;1;Samurai-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Samurai-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+127;1;Samurai-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Samurai-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.
+128;1;Samurai-Eddie-Monstrum!;SCHRITTE:<br>1.Alle Monstren auf dem Spielplan erhalten eine Extra-Aktivierung.<br>2.Ein Samurai-Eddie-Monstrum erscheint, falls verfügbar. Falls nicht, überspringt diesen Schritt.

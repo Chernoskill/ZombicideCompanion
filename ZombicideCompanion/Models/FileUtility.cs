@@ -17,7 +17,7 @@ namespace ZombicideCompanion.Models
             //Console.WriteLine($"[FileUtility/SaveFile] Write string: {str}");
         }
 
-        public static async Task<string> LoadFile(string filePath)
+        public static async Task<string?> LoadFile(string filePath)
         {
             Console.WriteLine($"[FileUtility/LoadFile] filePath: \"{filePath}\".");
             try
@@ -32,7 +32,7 @@ namespace ZombicideCompanion.Models
             {
                 Console.WriteLine(ex.Message);
             }
-            return string.Empty;
+            return null;
         }
 
         public static async Task<Folder?> PickFolder(CancellationToken cancellationToken)

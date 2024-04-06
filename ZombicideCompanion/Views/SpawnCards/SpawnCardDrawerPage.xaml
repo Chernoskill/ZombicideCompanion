@@ -6,6 +6,14 @@
 	<VerticalStackLayout x:Name="RootLayout">
 		<Grid>
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Label Grid.Column="0" Text="{Binding SpawnCardIndicesCount, StringFormat='Karten im Deck: {0}'}" FontSize="18" VerticalTextAlignment="Center"/>
+			<Button Grid.Column="1" FontSize="18" Text="Shuffle" Clicked="ShuffleSpawnCardsButton_Clicked" HorizontalOptions="End"/>
+		</Grid>
+		<Grid>
+			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="64" />
 				<ColumnDefinition Width="128" />
@@ -22,7 +30,7 @@
 			Clicked="DangerLevelIncreaseButton_Clicked"
 			FontSize="36"/>
 		</Grid>
-		<Button FontSize="18" Text="Draw" Clicked="DrawSpawnCardButton_Clicked"/>
 		<Label FontSize="18" x:Name="SpawnCardDrawnTitleLabel" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+		<Button FontSize="18" Text="Draw" Clicked="DrawSpawnCardButton_Clicked" VerticalOptions="End"/>
 	</VerticalStackLayout>
 </ContentPage>
