@@ -5,103 +5,110 @@
              x:Class="ZombicideCompanion.Views.SpawnCards.SpawnCardsConfigPage"
              Title="Spawn cards config"
 			 xmlns:local="clr-namespace:ZombicideCompanion.Views.SpawnCards">
+	<ScrollView>
+		<VerticalStackLayout>
+			<Grid RowSpacing="4">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
 
-	<Grid RowSpacing="4">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
+				<Grid Grid.Row="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Label Grid.Row="0" Grid.Column="0" Text="Karten insgesamt" FontSize="16" FontAttributes="Bold"/>
+					<Label Grid.Row="0" Grid.Column="1" x:Name="SpawnCardsCountLabel" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+					<Label Grid.Row="0" Grid.Column="2" Text="100%" HorizontalTextAlignment="Start" FontSize="16" FontAttributes="Bold"/>
 
-		<Grid Grid.Row="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Label Grid.Row="0" Grid.Column="0" Text="Karten insgesamt" FontSize="16" FontAttributes="Bold"/>
-			<Label Grid.Row="0" Grid.Column="1" x:Name="SpawnCardsCountLabel" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
-			<Label Grid.Row="0" Grid.Column="2" Text="100%" HorizontalTextAlignment="Start" FontSize="16" FontAttributes="Bold"/>
+					<Label Grid.Row="1" Grid.Column="0" Text="Xeno-Brut" FontSize="16" />
+					<Label Grid.Row="1" Grid.Column="1" x:Name="SpawnCardsCountNormalLabel" FontSize="16" HorizontalTextAlignment="Center"/>
+					<Label Grid.Row="1" Grid.Column="2" x:Name="SpawnCardsRatioNormalLabel" FontSize="16" HorizontalTextAlignment="Start">
+						<Label.FormattedText>
+							<FormattedString>
+								<Span x:Name="SpawnCardsRatioNormalLabelMain"/>
+								<Span Text="%"/>
+							</FormattedString>
+						</Label.FormattedText>
+					</Label>
+					<Label Grid.Row="2" Grid.Column="0" Text="Fäulnis" FontSize="16"/>
+					<Label Grid.Row="2" Grid.Column="1" x:Name="SpawnCardsCountMoldLabel" FontSize="16" HorizontalTextAlignment="Center"/>
+					<Label Grid.Row="2" Grid.Column="2" x:Name="SpawnCardsRatioMoldLabel" FontSize="16" HorizontalTextAlignment="Start">
+						<Label.FormattedText>
+							<FormattedString>
+								<Span x:Name="SpawnCardsRatioMoldLabelMain"/>
+								<Span Text="%"/>
+							</FormattedString>
+						</Label.FormattedText>
+					</Label>
+					<Label Grid.Row="3" Grid.Column="0" Text="Monstrum" FontSize="16"/>
+					<Label Grid.Row="3" Grid.Column="1" x:Name="SpawnCardsCountAbominationLabel" FontSize="16" HorizontalTextAlignment="Center"/>
+					<Label Grid.Row="3" Grid.Column="2" x:Name="SpawnCardsRatioAbominationLabel" FontSize="16" HorizontalTextAlignment="Start">
+						<Label.FormattedText>
+							<FormattedString>
+								<Span x:Name="SpawnCardsRatioAbominationLabelMain"/>
+								<Span Text="%"/>
+								<Span x:Name="SpawnCardsRatioAbominationLabelDeviation"/>
+							</FormattedString>
+						</Label.FormattedText>
+					</Label>
+					<Label Grid.Row="4" Grid.Column="0" Text="Extra-Aktivierung" FontSize="16"/>
+					<Label Grid.Row="4" Grid.Column="1" x:Name="SpawnCardsCountExtraActivationLabel" FontSize="16" HorizontalTextAlignment="Center"/>
+					<Label Grid.Row="4" Grid.Column="2" x:Name="SpawnCardsRatioExtraActivationLabel" FontSize="16" HorizontalTextAlignment="Start">
+						<Label.FormattedText>
+							<FormattedString>
+								<Span x:Name="SpawnCardsRatioExtraActivationLabelMain"/>
+								<Span Text="%"/>
+							</FormattedString>
+						</Label.FormattedText>
+					</Label>
+				</Grid>
+				<Button Grid.Row="1" Text="Pick" Clicked="PickFolderButtonClickedAsync" HorizontalOptions="Start"/>
+				<Button Grid.Row="1" Text="Save" Clicked="SaveButtonClickedAsync" HorizontalOptions="Center"/>
+				<Button Grid.Row="1" Text="Load" Clicked="LoadButtonClickedAsync" HorizontalOptions="End"/>
 
-			<Label Grid.Row="1" Grid.Column="0" Text="Xeno-Brut" FontSize="16" />
-			<Label Grid.Row="1" Grid.Column="1" x:Name="SpawnCardsCountNormalLabel" FontSize="16" HorizontalTextAlignment="Center"/>
-			<Label Grid.Row="1" Grid.Column="2" x:Name="SpawnCardsRatioNormalLabel" FontSize="16" HorizontalTextAlignment="Start">
-				<Label.FormattedText>
-					<FormattedString>
-						<Span x:Name="SpawnCardsRatioNormalLabelMain"/>
-						<Span Text="%"/>
-					</FormattedString>
-				</Label.FormattedText>
-			</Label>
-			<Label Grid.Row="2" Grid.Column="0" Text="Fäulnis" FontSize="16"/>
-			<Label Grid.Row="2" Grid.Column="1" x:Name="SpawnCardsCountMoldLabel" FontSize="16" HorizontalTextAlignment="Center"/>
-			<Label Grid.Row="2" Grid.Column="2" x:Name="SpawnCardsRatioMoldLabel" FontSize="16" HorizontalTextAlignment="Start">
-				<Label.FormattedText>
-					<FormattedString>
-						<Span x:Name="SpawnCardsRatioMoldLabelMain"/>
-						<Span Text="%"/>
-					</FormattedString>
-				</Label.FormattedText>
-			</Label>
-			<Label Grid.Row="3" Grid.Column="0" Text="Monstrum" FontSize="16"/>
-			<Label Grid.Row="3" Grid.Column="1" x:Name="SpawnCardsCountAbominationLabel" FontSize="16" HorizontalTextAlignment="Center"/>
-			<Label Grid.Row="3" Grid.Column="2" x:Name="SpawnCardsRatioAbominationLabel" FontSize="16" HorizontalTextAlignment="Start">
-				<Label.FormattedText>
-					<FormattedString>
-						<Span x:Name="SpawnCardsRatioAbominationLabelMain"/>
-						<Span Text="%"/>
-						<Span x:Name="SpawnCardsRatioAbominationLabelDeviation"/>
-					</FormattedString>
-				</Label.FormattedText>
-			</Label>
-			<Label Grid.Row="4" Grid.Column="0" Text="Extra-Aktivierung" FontSize="16"/>
-			<Label Grid.Row="4" Grid.Column="1" x:Name="SpawnCardsCountExtraActivationLabel" FontSize="16" HorizontalTextAlignment="Center"/>
-			<Label Grid.Row="4" Grid.Column="2" x:Name="SpawnCardsRatioExtraActivationLabel" FontSize="16" HorizontalTextAlignment="Start">
-				<Label.FormattedText>
-					<FormattedString>
-						<Span x:Name="SpawnCardsRatioExtraActivationLabelMain"/>
-						<Span Text="%"/>
-					</FormattedString>
-				</Label.FormattedText>
-			</Label>
-		</Grid>
-		<Button Grid.Row="1" Text="Pick" Clicked="PickFolderButtonClickedAsync" HorizontalOptions="Start"/>
-		<Button Grid.Row="1" Text="Save" Clicked="SaveButtonClickedAsync" HorizontalOptions="Center"/>
-		<Button Grid.Row="1" Text="Load" Clicked="LoadButtonClickedAsync" HorizontalOptions="End"/>
-		<ListView Grid.Row="2" x:Name="SpawnCardsListView" SelectionMode="None" HasUnevenRows="True" Header="Spawn cards" >
-			<ListView.ItemTemplate>
-				<DataTemplate>
-					<ViewCell>
-						<Grid Margin="0,0,0,6">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="Auto" />
-								<RowDefinition Height="Auto" />
-								<!--<RowDefinition Height="Auto" />-->
-							</Grid.RowDefinitions>
+				<!--<ListView Grid.Row="2" x:Name="SpawnCardsListView" SelectionMode="None" HasUnevenRows="True" Header="Spawn cards" >
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<ViewCell>
+								<Grid Margin="0,0,0,6">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+										<RowDefinition Height="Auto" />
+									</Grid.RowDefinitions>
 							
-							<Label Grid.Row="0" Text="{Binding Title}" FontSize="18" TextTransform="Uppercase" HorizontalTextAlignment="Center"/>
-							<CheckBox Grid.Row="0" IsChecked="{Binding Include}" CheckedChanged="OnCardIncludeCheckBoxCheckedChanged" HorizontalOptions="End"/>
+									<Label Grid.Row="0" Text="{Binding Title}" FontSize="18" TextTransform="Uppercase" HorizontalTextAlignment="Center"/>
+									<CheckBox Grid.Row="0" IsChecked="{Binding Include}" CheckedChanged="OnCardIncludeCheckBoxCheckedChanged" HorizontalOptions="End"/>
 
-							<Grid Grid.Row="1">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="32" />
-								</Grid.ColumnDefinitions>
-								<Label Grid.Column="0" Text="{Binding TypeText}" FontSize="18" Margin="0,6,0,0"/>
-								<Label Grid.Column="1" Text="{Binding CardNumber, StringFormat='{0:D2}'}" FontSize="18" Margin="0,0,6,0" HorizontalOptions="End" HorizontalTextAlignment="End" />
-							</Grid>
-							<!--<Label Grid.Row="2" Text="{Binding Text}" FontSize="18" TextType="Html" IsVisible="{Binding HasText}"/>-->
-						</Grid>
-					</ViewCell>
-				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
-	</Grid>
+									<Grid Grid.Row="1">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="*" />
+											<ColumnDefinition Width="32" />
+										</Grid.ColumnDefinitions>
+										<Label Grid.Column="0" Text="{Binding TypeText}" FontSize="18" Margin="0,6,0,0"/>
+										<Label Grid.Column="1" Text="{Binding CardNumber, StringFormat='{0:D2}'}" FontSize="18" Margin="0,0,6,0" HorizontalOptions="End" HorizontalTextAlignment="End" />
+									</Grid>
+									<Label Grid.Row="2" Text="{Binding Text}" FontSize="18" TextType="Html" IsVisible="{Binding HasText}"/>
+								</Grid>
+							</ViewCell>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>-->
+			</Grid>
+			<VerticalStackLayout x:Name="SpawnCardsVerticalStackLayout">
+				
+			</VerticalStackLayout>
+		</VerticalStackLayout>
+	</ScrollView>
 </ContentPage>

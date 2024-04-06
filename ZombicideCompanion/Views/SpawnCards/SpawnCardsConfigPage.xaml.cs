@@ -47,22 +47,13 @@ public partial class SpawnCardsConfigPage : ContentPage
 
     public SpawnCardsConfigPage()
     {
-        WeakReferenceMessenger.Default.Register<string>(this, (r, m) =>
-        {
-            Console.WriteLine($"{GetType()} EVENT {m}");
-            if (m == EventSpawnCardDataLoaded)
-            {
-                SpawnCardsListView.SetBinding(ListView.ItemsSourceProperty, "SpawnCardsLocal");
-            }
-        });
-
         InitializeComponent();
 
         BindingContext = this;
 
-        //SpawnCardsListView.SetBinding(ListView.ItemsSourceProperty, "SpawnCardsLocal");
-
         _storedColor = SpawnCardsCountAbominationLabel.TextColor;
+
+        InitializeSpawnCardControls();
     }
 
     public static async Task LoadSpawnCardDataAsync()
@@ -173,6 +164,7 @@ public partial class SpawnCardsConfigPage : ContentPage
         #endregion
 
         //WeakReferenceMessenger.Default.Send(EventSpawnCardDataLoaded);
+
         UpdateSpawnCardsIncluded();
     }
 
@@ -277,10 +269,10 @@ public partial class SpawnCardsConfigPage : ContentPage
             Console.WriteLine($"config end");
 
             List<string> linesConfig = config.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            foreach(SpawnCardData spawnCard in SpawnCards)
+            Console.WriteLine($"linesConfig.Count: {linesConfig.Count}");
+            foreach (SpawnCardData spawnCard in SpawnCards)
             {
                 bool include = linesConfig.IndexOf(spawnCard.CardNumber.ToString()) != -1;
-                Console.WriteLine($"{spawnCard.CardNumber} include: {include}");
                 spawnCard.Include = include;
             }
             //Dictionary<int, SpawnCardData> spawnCardsDict = SpawnCards.ToDictionary(x => x.CardNumber);
@@ -298,7 +290,96 @@ public partial class SpawnCardsConfigPage : ContentPage
         }
         //WeakReferenceMessenger.Default.Send(EventSpawnCardDataLoaded);
         UpdateSpawnCardsIncluded();
-        SpawnCardsListView.SetBinding(ListView.ItemsSourceProperty, "SpawnCardsLocal");
-        SpawnCardsListView.ItemsSource = SpawnCardsLocal;
+        InitializeSpawnCardControls();
+    }
+
+    private void InitializeSpawnCardControls()
+    {
+        SpawnCardsVerticalStackLayout.Clear();
+
+        for (int i = 0; i < SpawnCards.Count; i++) 
+        {
+            SpawnCardData spawnCard = SpawnCards[i];
+
+            Grid grid = new Grid();
+            grid.RowDefinitions = new RowDefinitionCollection()
+            {
+                new RowDefinition() {Height = GridLength.Auto},
+                new RowDefinition() {Height = GridLength.Auto}
+            };
+
+            Label titleLabel = new Label()
+            {
+                Text = spawnCard.Title,
+                FontSize = 18,
+                TextTransform = TextTransform.Uppercase,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
+            grid.Add(titleLabel);
+
+            CheckBox includeCheckBox = new CheckBox()
+            {
+                StyleId = $"SpawnCard{spawnCard.CardNumber}CheckBox",
+                IsChecked = spawnCard.Include,
+                HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End},
+                BindingContext = spawnCard
+            };
+            includeCheckBox.SetBinding(CheckBox.IsCheckedProperty, "Include");
+            includeCheckBox.CheckedChanged += (sender, e) =>
+            {
+                // Perform required operation after examining e.Value
+                includeCheckBox.IsChecked = e.Value;
+                spawnCard.Include = includeCheckBox.IsChecked;
+                UpdateSpawnCardsIncluded();
+                UpdateCountRatioLabels();
+                Console.WriteLine($"includeCheckBox.IsChecked: {includeCheckBox.StyleId} {includeCheckBox.IsChecked}");
+                Console.WriteLine($"{SpawnCards[spawnCard.CardNumber - 1].CardNumber} {SpawnCards[spawnCard.CardNumber - 1].Title}: {SpawnCards[spawnCard.CardNumber - 1].Include}");
+            };
+            grid.Add(includeCheckBox);
+
+            Grid subGrid = new Grid();
+            subGrid.ColumnDefinitions = new ColumnDefinitionCollection()
+            {
+                new ColumnDefinition() {Width = GridLength.Star},
+                new ColumnDefinition() {Width = GridLength.Auto}
+            };
+
+            Label typeLabel = new Label()
+            {
+                Text = spawnCard.TypeText,
+                FontSize = 18,
+                Margin = new Thickness(0,6,0,0)
+            };
+            subGrid.Add(typeLabel);
+
+            Label cardNumberLabel = new Label()
+            {
+                Text = spawnCard.CardNumber.ToString(),
+                FontSize = 18,
+                Margin = new Thickness(0, 0, 6, 0),
+                HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End },
+                HorizontalTextAlignment = TextAlignment.End,
+                BindingContext = spawnCard
+            };
+            cardNumberLabel.SetBinding(Label.TextProperty, "CardNumber", BindingMode.Default, null, "{0:D2}");
+            subGrid.Add(cardNumberLabel, column:1);
+
+            if(spawnCard.HasText)
+            {
+                Label textLabel = new Label()
+                {
+                    Text = spawnCard.CardNumber.ToString(),
+                    FontSize = 18,
+                    TextType = TextType.Html,
+                    BindingContext = spawnCard
+                };
+                textLabel.SetBinding(Label.TextProperty, "Text");
+                subGrid.Add(textLabel, row: 2);
+            }
+
+            grid.Add(subGrid, row:1);
+
+            SpawnCardsVerticalStackLayout.Add(grid);
+        }
     }
 }
