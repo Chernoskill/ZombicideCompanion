@@ -3,34 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ZombicideCompanion.Views.SpawnCards.SpawnCardDrawerPage"
              Title="Spawn Card Drawer">
-	<VerticalStackLayout x:Name="RootLayout">
+	<!--<VerticalStackLayout>-->
 		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Label Grid.Column="0" Text="{Binding SpawnCardIndicesCount, StringFormat='Karten im Deck: {0}'}" FontSize="18" VerticalTextAlignment="Center"/>
-			<Button Grid.Column="1" FontSize="18" Text="Shuffle" Clicked="ShuffleSpawnCardsButton_Clicked" HorizontalOptions="End"/>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<VerticalStackLayout Grid.Row="0">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Label Grid.Column="0" x:Name="SpawnCardsInDeckLabel" FontSize="18" VerticalTextAlignment="Center"/>
+					<Button Grid.Column="1" FontSize="18" Text="Mischen" Clicked="ShuffleSpawnCardsButton_Clicked" HorizontalOptions="End"/>
+				</Grid>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="64" />
+						<ColumnDefinition Width="128" />
+						<ColumnDefinition Width="64" />
+					</Grid.ColumnDefinitions>
+					<Label Grid.Column="0" Text="Gefahrenstufe:" FontSize="18" VerticalTextAlignment="Center"/>
+					<Button Grid.Column="1" 
+					Text="-" 
+					Clicked="DangerLevelDecreaseButton_Clicked"
+					FontSize="24"/>
+					<Label Grid.Column="2" FontSize="36" x:Name="DangerLevelLabel" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"></Label>
+					<Button Grid.Column="3" 
+					Text="+" 
+					Clicked="DangerLevelIncreaseButton_Clicked"
+					FontSize="24"/>
+				</Grid>
+				<VerticalStackLayout x:Name="SpawnCardTextVerticalLayout">
+				</VerticalStackLayout>
+			</VerticalStackLayout>
+			<Button Grid.Row="1" FontSize="36" Text="Karte ziehen" Clicked="DrawSpawnCardButton_Clicked" VerticalOptions="End"/>
 		</Grid>
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="64" />
-				<ColumnDefinition Width="128" />
-				<ColumnDefinition Width="64" />
-			</Grid.ColumnDefinitions>
-			<Label Grid.Column="0" Text="Danger level:" FontSize="18" VerticalTextAlignment="Center"/>
-			<Button Grid.Column="1" 
-			Text="-" 
-			Clicked="DangerLevelDecreaseButton_Clicked"
-			FontSize="36"/>
-			<Label Grid.Column="2" FontSize="36" x:Name="DangerLevelLabel" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"></Label>
-			<Button Grid.Column="3" 
-			Text="+" 
-			Clicked="DangerLevelIncreaseButton_Clicked"
-			FontSize="36"/>
-		</Grid>
-		<Label FontSize="18" x:Name="SpawnCardDrawnTitleLabel" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-		<Button FontSize="18" Text="Draw" Clicked="DrawSpawnCardButton_Clicked" VerticalOptions="End"/>
-	</VerticalStackLayout>
+	<!--</VerticalStackLayout>-->
 </ContentPage>

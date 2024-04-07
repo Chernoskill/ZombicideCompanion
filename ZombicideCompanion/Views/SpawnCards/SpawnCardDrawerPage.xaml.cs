@@ -1,23 +1,12 @@
 using CommunityToolkit.Mvvm.Messaging;
 using ZombicideCompanion.Models;
+using static Java.Util.Jar.Attributes;
 
 namespace ZombicideCompanion.Views.SpawnCards;
 
 public partial class SpawnCardDrawerPage : ContentPage
 {
     public List<int> SpawnCardIndices { get; set; } = new List<int>();
-    private int _spawnCardIndicesCount;
-    public int SpawnCardIndicesCount
-    {
-        get
-        {
-            return _spawnCardIndicesCount;
-        }
-        set
-        {
-            _spawnCardIndicesCount = value;
-        }
-    }
     public List<SpawnCardData> SpawnCardsIncluded = new List<SpawnCardData>();
 
     public SpawnCardData? SpawnCardDrawn { get; set; } = default!;
@@ -44,7 +33,6 @@ public partial class SpawnCardDrawerPage : ContentPage
     }
     private string[] DangerLevelStrings { get; set; } = ["Blau", "Gelb", "Orange", "Rot"];
     private Color[] DangerLevelColors = [new Color(0, 0, 255), new Color(255, 208, 0), new Color(255, 128, 0), new Color(255, 0, 0)];
-    private List<View> _controls = new List<View>();
 
     public SpawnCardDrawerPage()
     {
@@ -62,6 +50,7 @@ public partial class SpawnCardDrawerPage : ContentPage
         BindingContext = this;
 
         DangerLevel = DangerLevel.Blue;
+        ShuffleSpawnCards();
     }
 
     private void DrawSpawnCardButton_Clicked(object sender, EventArgs e)
@@ -85,10 +74,11 @@ public partial class SpawnCardDrawerPage : ContentPage
 
         SpawnCardDrawn = spawnCard;
         SpawnCardIndices.RemoveAt(SpawnCardIndices.Count - 1);
-        SpawnCardIndicesCount = SpawnCardIndices.Count;
         SpawnCardIndicesDrawn.Add(index);
         SpawnCardIndicesDrawn.RemoveAt(0);
         SetupSpawnCardElements();
+
+        UpdateSpawnCardsInDeckLabel();
     }
 
     private void ShuffleSpawnCards()
@@ -134,23 +124,35 @@ public partial class SpawnCardDrawerPage : ContentPage
         //{
         //    Console.WriteLine($"{i}: {SpawnCardsIncluded[SpawnCardIndices[i]].CardNumber} {SpawnCardsIncluded[SpawnCardIndices[i]].Title}");
         //}
+        UpdateSpawnCardsInDeckLabel();
+        SpawnCardTextVerticalLayout.Clear();
+    }
 
-        SpawnCardIndicesCount = SpawnCardIndices.Count;
+    private void UpdateSpawnCardsInDeckLabel()
+    {
+        SpawnCardsInDeckLabel.Text = $"Karten im Deck: {SpawnCardIndices.Count} von {SpawnCardsIncluded.Count}";
     }
 
     private void SetupSpawnCardElements()
     {
         if (SpawnCardDrawn == null)
         {
+            SpawnCardTextVerticalLayout.Clear();
             return;
         }
-        SpawnCardDrawnTitleLabel.Text = SpawnCardDrawn.Title;
-        SpawnCardDrawnTitleLabel.TextTransform = TextTransform.Uppercase;
+        SpawnCardTextVerticalLayout.Clear();
 
-        foreach (View control in _controls)
+        Label titleLabel = new Label()
         {
-            RootLayout.Remove(control);
-        }
+            Text = SpawnCardDrawn.Title,
+            TextTransform = TextTransform.Uppercase,
+            StyleId = "SpawnCardDrawnTitleLabel",
+            FontSize = 18,
+            HorizontalTextAlignment = TextAlignment.Center,
+            VerticalTextAlignment = TextAlignment.Center
+        };
+        SpawnCardTextVerticalLayout.Add(titleLabel);
+
 
         if (SpawnCardDrawn.Type == SpawnCardDataType.Normal)
         {
@@ -158,14 +160,12 @@ public partial class SpawnCardDrawerPage : ContentPage
             {
                 Label label = new Label
                 {
-                    Parent = RootLayout,
-                    Text = SpawnCardDrawn.SpawnAmounts[0].ToString(),
+                    Text = SpawnCardDrawn.SpawnAmounts[0].ToString() + (i == (int)DangerLevel ? " <<" : ""),
                     TextColor = DangerLevelColors[i],
                     FontSize = 18,
                     FontAttributes = i == (int)DangerLevel ? FontAttributes.Bold : FontAttributes.None
                 };
-                RootLayout.Add(label);
-                _controls.Add(label);
+                SpawnCardTextVerticalLayout.Add(label);
             }
         }
         if (SpawnCardDrawn.Type == SpawnCardDataType.ExtraActivation)
@@ -174,38 +174,32 @@ public partial class SpawnCardDrawerPage : ContentPage
             {
                 Label label = new Label
                 {
-                    Parent = RootLayout,
                     Text = SpawnCardDrawn.Activations[0],
                     TextColor = DangerLevelColors[i],
                     FontSize = 18,
                     FontAttributes = i == (int)DangerLevel ? FontAttributes.Bold : FontAttributes.None
                 };
-                RootLayout.Add(label);
-                _controls.Add(label);
+                SpawnCardTextVerticalLayout.Add(label);
             }
         }
         else if (SpawnCardDrawn.Type == SpawnCardDataType.Mold)
         {
             Label label = new Label
             {
-                Parent = RootLayout,
                 Text = $"x{SpawnCardDrawn.SpawnAmounts[0]}",
                 FontSize = 18,
             };
-            RootLayout.Add(label);
-            _controls.Add(label);
+            SpawnCardTextVerticalLayout.Add(label);
         }
         if (string.IsNullOrEmpty(SpawnCardDrawn.Text) == false)
         {
             Label label = new Label
             {
-                Parent = RootLayout,
                 Text = SpawnCardDrawn.Text,
                 FontSize = 18,
                 TextType = TextType.Html
             };
-            RootLayout.Add(label);
-            _controls.Add(label);
+            SpawnCardTextVerticalLayout.Add(label);
         }
     }
 

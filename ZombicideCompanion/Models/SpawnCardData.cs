@@ -8,7 +8,7 @@ namespace ZombicideCompanion.Models
         private const string EmptyString = "n/A";
         public int CardNumber {  get; set; }
         public SpawnCardDataType Type { get; set; } = SpawnCardDataType.Normal;
-        private string _title;
+        private string _title = default!;
         public string Title
         {
             get
@@ -21,7 +21,7 @@ namespace ZombicideCompanion.Models
             }
         }
 
-        private string _text;
+        private string _text = default!;
         public string Text 
         { 
             get
@@ -37,7 +37,6 @@ namespace ZombicideCompanion.Models
         public int[] SpawnAmounts { get; set; } = default!;
         public string[] Activations { get; set; } = default!;
         public bool Include { get; set; } = true;
-        public Color Color { get; set; } = SpawnCardsConfigPage.CardBackgroundEnabled;
         public string TypeText { get; set; } = default!;
 
         public SpawnCardData() { }

@@ -1,7 +1,7 @@
-using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Controls.Shapes;
+using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 using ZombicideCompanion.Models;
 
@@ -9,6 +9,7 @@ namespace ZombicideCompanion.Views.SpawnCards;
 
 public partial class SpawnCardsConfigPage : ContentPage
 {
+    public static SpawnCardsConfigPage? Instance { get; set; }
     public static ObservableCollection<SpawnCardData> SpawnCards { get; set; } = new ObservableCollection<SpawnCardData>();
     public ObservableCollection<SpawnCardData> SpawnCardsLocal => SpawnCards;
     public static SpawnCardData[] SpawnCardsIncluded { get; set; } = [];
@@ -16,10 +17,8 @@ public partial class SpawnCardsConfigPage : ContentPage
     public static int ExtraActivationCount { get; set; }
     private const int AbominationBaseRatio = 24;
     private Color _storedColor;
-    private readonly Color _warningColor = Color.FromRgb(255,0,0);
+    private readonly Color _warningColor = Color.FromRgb(255, 0, 0);
 
-    public static Color CardBackgroundEnabled = new Color(0, 0, 255);
-    public static Color CardBackgroundDisabled = new Color(255, 0, 0);
     public int SpawnCardsCount => SpawnCards.Where(x => x.Include).Count();
     public int SpawnCardsCountNormal => SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Normal).Count();
     public int SpawnCardsCountMold => SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Mold).Count();
@@ -31,7 +30,6 @@ public partial class SpawnCardsConfigPage : ContentPage
     public double SpawnCardsRatioAbomination => Math.Round((double)SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.Abomination).Count() / SpawnCardsCount * 100, RatioDecimalPlaces);
     public double SpawnCardsRatioExtraActivation => Math.Round((double)SpawnCards.Where(x => x.Include && x.Type == SpawnCardDataType.ExtraActivation).Count() / SpawnCardsCount * 100, RatioDecimalPlaces);
 
-    public static string EventSpawnCardDataLoaded = "SPAWN CARD DATA LOADED";
     public static string EventSpawnCardIncludeChanged = "SPAWN CARD INCLUDE CHANGED";
 
     private const int RatioDecimalPlaces = 0;
@@ -51,13 +49,21 @@ public partial class SpawnCardsConfigPage : ContentPage
 
         BindingContext = this;
 
+        Instance = this;
+
         _storedColor = SpawnCardsCountAbominationLabel.TextColor;
 
-        InitializeSpawnCardControls();
+        UpdateSpawnCardsIncluded();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            InitializeSpawnCardControls();
+        });
     }
 
     public static async Task LoadSpawnCardDataAsync()
     {
+        Console.WriteLine($"[SpawnCardsConfigPage/LoadSpawnCardDataAsync]");
         using Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(SpawnFileName);
         using StreamReader reader = new StreamReader(fileStream);
         string spawnCardDataString = await reader.ReadToEndAsync();
@@ -65,10 +71,11 @@ public partial class SpawnCardsConfigPage : ContentPage
 
         SpawnCards.Clear();
         string[] lines = spawnCardDataString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        Console.WriteLine($"[SpawnCardsConfigPage/LoadSpawnCardDataAsync] lines.Length: {lines.Length}");
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i].Trim();
-            if(line.StartsWith("//"))
+            if (line.StartsWith("//"))
             {
                 continue;
             }
@@ -82,7 +89,7 @@ public partial class SpawnCardsConfigPage : ContentPage
                 commentBlockStarted = true;
                 continue;
             }
-            if(commentBlockStarted)
+            if (commentBlockStarted)
             {
                 continue;
             }
@@ -132,62 +139,57 @@ public partial class SpawnCardsConfigPage : ContentPage
             }
             card.TypeText = SpawnCardDataTypeStrings[card.Type];
             SpawnCards.Add(card);
+            //Console.WriteLine($"[SpawnCardsConfigPage/LoadSpawnCardDataAsync] SpawnCardData added: {card.CardNumber} {card.Title}");
         }
 
-        #region Load SpawnCard User Config
-        //string? config = await FileUtility.LoadFile($"{FileSystem.Current.AppDataDirectory}/{SpawnUserConfigFileName}");
-        //if (string.IsNullOrEmpty(config) == false)
-        //{
-        //    Console.WriteLine($"config start");
-        //    Console.WriteLine($"config: {config}");
-        //    Console.WriteLine($"config end");
-
-        //    foreach (SpawnCardData spawnCard in SpawnCards)
-        //    {
-        //        spawnCard.Include = false;
-        //    }
-
-        //    string[] linesConfig = config.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-        //    Dictionary<int, SpawnCardData> spawnCardsDict = SpawnCards.ToDictionary(x => x.CardNumber);
-        //    Console.WriteLine($"linesConfig.Length: {linesConfig.Length}");
-        //    for (int i = 0; i < linesConfig.Length; i++)
-        //    {
-        //        string line = linesConfig[i].Trim();
-        //        Console.WriteLine($"config line {i}: {line}");
-        //        if (int.TryParse(line, out int cardNumber))
-        //        {
-        //            spawnCardsDict[cardNumber].Include = true;
-        //            Console.WriteLine($"cardNumber {cardNumber}");
-        //        }
-        //    }
-        //}
-        #endregion
-
-        //WeakReferenceMessenger.Default.Send(EventSpawnCardDataLoaded);
-
-        UpdateSpawnCardsIncluded();
+        await LoadSpawnUserConfigAsync();
     }
 
-    public void OnCardIncludeCheckBoxCheckedChanged(object sender, CheckedChangedEventArgs e)
+    public static async Task LoadSpawnUserConfigAsync()
     {
-        CheckBox checkBox = (CheckBox)sender!;
-        SpawnCardData card = (SpawnCardData)checkBox.BindingContext;
-        (checkBox.Parent as Grid)!.BackgroundColor = card.Include ? SpawnCardsConfigPage.CardBackgroundEnabled : SpawnCardsConfigPage.CardBackgroundDisabled;
-        UpdateSpawnCardsIncluded();
-        WeakReferenceMessenger.Default.Send(EventSpawnCardIncludeChanged);
+        Console.WriteLine($"[SpawnCardsConfigPage/LoadSpawnUserConfigAsync]");
+        string? config = await FileUtility.LoadFile($"{FileSystem.Current.AppDataDirectory}/{SpawnUserConfigFileName}");
+        if (string.IsNullOrEmpty(config))
+        {
+            Console.WriteLine("[SpawnCardsConfigPage/LoadSpawnUserConfigAsync] Spawncard config couldn't be loaded or is empty.");
+            UpdateSpawnCardsIncluded();
+            return;
+        }
 
-        UpdateCountRatioLabels();
+        List<string> linesConfig = config.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        foreach (SpawnCardData spawnCard in SpawnCards)
+        {
+            bool include = linesConfig.IndexOf(spawnCard.CardNumber.ToString()) != -1;
+            spawnCard.Include = include;
+        }
+    }
+
+    private async Task SaveSpawnUserConfigAsync()
+    {
+        Console.WriteLine($"[SpawnCardsConfigPage/SaveSpawnUserConfigAsync]");
+        StringBuilder sb = new StringBuilder(String.Empty);
+        for (int i = 0; i < SpawnCardsIncluded.Length; i++)
+        {
+            SpawnCardData spawnCard = SpawnCardsIncluded[i];
+            sb.Append($"{spawnCard.CardNumber}{Environment.NewLine}");
+        }
+        await FileUtility.SaveFile(sb.ToString(), $"{FileSystem.Current.AppDataDirectory}/{SpawnUserConfigFileName}");
     }
 
     private static void UpdateSpawnCardsIncluded()
     {
+        Console.WriteLine($"[SpawnCardsConfigPage/UpdateSpawnCardsIncluded]");
         SpawnCardsIncluded = SpawnCards.Where(x => x.Include).ToArray();
+        Console.WriteLine($"[SpawnCardsConfigPage/UpdateSpawnCardsIncluded] SpawnCardsIncluded.Count: {SpawnCardsIncluded.Length}");
         AbominationCount = SpawnCardsIncluded.Where(x => x.Type == SpawnCardDataType.Abomination).Count();
         ExtraActivationCount = SpawnCardsIncluded.Where(x => x.Type == SpawnCardDataType.ExtraActivation).Count();
+
+        Instance?.UpdateCountRatioLabels();
     }
 
     private void UpdateCountRatioLabels()
     {
+        Console.WriteLine($"[SpawnCardsConfigPage/UpdateCountRatioLabels]");
         SpawnCardsCountLabel.Text = SpawnCardsCount.ToString();
         SpawnCardsCountNormalLabel.Text = SpawnCardsCountNormal.ToString();
         SpawnCardsCountMoldLabel.Text = SpawnCardsCountMold.ToString();
@@ -223,83 +225,19 @@ public partial class SpawnCardsConfigPage : ContentPage
         SpawnCardsRatioAbominationLabelDeviation.Text = abominationRatioDeviationString;
     }
 
-    async void SaveButtonClickedAsync(object sender, EventArgs e)
-    {
-        //await SaveSpawnUserConfigAsync();
-        StringBuilder sb = new StringBuilder(String.Empty);
-        for (int i = 0; i < SpawnCardsIncluded.Length; i++)
-        {
-            SpawnCardData spawnCard = SpawnCardsIncluded[i];
-            sb.Append($"{spawnCard.CardNumber}{Environment.NewLine}");
-        }
-        Console.WriteLine($"sb: {sb}");
-        await FileUtility.SaveFile(sb.ToString(), $"{folder!.Path}/{SpawnUserConfigFileName}");
-    }
-
-    private async void SaveSpawnUserConfigAsync()
-    {
-        StringBuilder sb = new StringBuilder(String.Empty);
-        for(int i = 0; i < SpawnCardsIncluded.Length; i++)
-        {
-            SpawnCardData spawnCard = SpawnCardsIncluded[i];
-            sb.Append($"{spawnCard.CardNumber}{Environment.NewLine}");
-        }
-        Console.WriteLine($"sb: {sb}");
-        await FileUtility.SaveFile(sb.ToString(), $"{FileSystem.Current.AppDataDirectory}/{SpawnUserConfigFileName}");
-    }
-
-    private Folder? folder;
-
-    private async void PickFolderButtonClickedAsync(object sender, EventArgs e)
-    {
-        //SaveSpawnUserConfig();
-        CancellationToken cancellationToken = new();
-        folder = await FileUtility.PickFolder(cancellationToken);
-    }
-
-    private async void LoadButtonClickedAsync(object sender, EventArgs e)
-    {
-        string file = await FileUtility.PickFile();
-        string config = await FileUtility.LoadFile(file);
-
-        if (string.IsNullOrEmpty(config) == false)
-        {
-            Console.WriteLine($"config start");
-            Console.WriteLine($"config: {config}");
-            Console.WriteLine($"config end");
-
-            List<string> linesConfig = config.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            Console.WriteLine($"linesConfig.Count: {linesConfig.Count}");
-            foreach (SpawnCardData spawnCard in SpawnCards)
-            {
-                bool include = linesConfig.IndexOf(spawnCard.CardNumber.ToString()) != -1;
-                spawnCard.Include = include;
-            }
-            //Dictionary<int, SpawnCardData> spawnCardsDict = SpawnCards.ToDictionary(x => x.CardNumber);
-            //Console.WriteLine($"linesConfig.Length: {linesConfig.Length}");
-            //for (int i = 0; i < linesConfig.Length; i++)
-            //{
-            //    string line = linesConfig[i].Trim();
-            //    Console.WriteLine($"config line {i}: {line}");
-            //    if (int.TryParse(line, out int cardNumber))
-            //    {
-            //        spawnCardsDict[cardNumber].Include = true;
-            //        Console.WriteLine($"cardNumber {cardNumber}");
-            //    }
-            //}
-        }
-        //WeakReferenceMessenger.Default.Send(EventSpawnCardDataLoaded);
-        UpdateSpawnCardsIncluded();
-        InitializeSpawnCardControls();
-    }
-
     private void InitializeSpawnCardControls()
     {
+        Console.WriteLine($"[SpawnCardsConfigPage/InitializeSpawnCardControls]");
         SpawnCardsVerticalStackLayout.Clear();
+        Console.WriteLine($"[SpawnCardsConfigPage/InitializeSpawnCardControls] SpawnCards.Count: {SpawnCards.Count}");
 
-        for (int i = 0; i < SpawnCards.Count; i++) 
+        BatchBegin();
+
+        for (int i = 0; i < SpawnCards.Count; i++)
         {
             SpawnCardData spawnCard = SpawnCards[i];
+
+            //Console.WriteLine($"[SpawnCardsConfigPage/InitializeSpawnCardControls] spawnCard: {spawnCard.CardNumber} {spawnCard.Title}");
 
             Grid grid = new Grid();
             grid.RowDefinitions = new RowDefinitionCollection()
@@ -308,20 +246,43 @@ public partial class SpawnCardsConfigPage : ContentPage
                 new RowDefinition() {Height = GridLength.Auto}
             };
 
+            Label cardNumberLabel = new Label()
+            {
+                Text = spawnCard.CardNumber.ToString(),
+                FontSize = 14,
+                Margin = new Thickness(6, 0, 0, 0),
+                HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Start },
+                BindingContext = spawnCard
+            };
+            cardNumberLabel.SetBinding(Label.TextProperty, "CardNumber", stringFormat: "{0:D2}");
+            grid.Add(cardNumberLabel, row: 0);
+
+            Label typeLabel = new Label()
+            {
+                Text = spawnCard.TypeText,
+                FontSize = 14,
+                HorizontalOptions = LayoutOptions.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
+                Margin = new Thickness(6, 0, 0, 0)
+            };
+            grid.Add(typeLabel, row: 0);
+
             Label titleLabel = new Label()
             {
                 Text = spawnCard.Title,
                 FontSize = 18,
                 TextTransform = TextTransform.Uppercase,
+                HorizontalOptions = LayoutOptions.Center,
                 HorizontalTextAlignment = TextAlignment.Center
             };
-            grid.Add(titleLabel);
+            grid.Add(titleLabel, row: 1);
 
             CheckBox includeCheckBox = new CheckBox()
             {
                 StyleId = $"SpawnCard{spawnCard.CardNumber}CheckBox",
+                Margin = new Thickness(0, -2, 6, 0),
                 IsChecked = spawnCard.Include,
-                HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End},
+                HorizontalOptions = LayoutOptions.End,
                 BindingContext = spawnCard
             };
             includeCheckBox.SetBinding(CheckBox.IsCheckedProperty, "Include");
@@ -330,56 +291,36 @@ public partial class SpawnCardsConfigPage : ContentPage
                 // Perform required operation after examining e.Value
                 includeCheckBox.IsChecked = e.Value;
                 spawnCard.Include = includeCheckBox.IsChecked;
+                Task.Run(SaveSpawnUserConfigAsync);
                 UpdateSpawnCardsIncluded();
                 UpdateCountRatioLabels();
-                Console.WriteLine($"includeCheckBox.IsChecked: {includeCheckBox.StyleId} {includeCheckBox.IsChecked}");
-                Console.WriteLine($"{SpawnCards[spawnCard.CardNumber - 1].CardNumber} {SpawnCards[spawnCard.CardNumber - 1].Title}: {SpawnCards[spawnCard.CardNumber - 1].Include}");
+                WeakReferenceMessenger.Default.Send(EventSpawnCardIncludeChanged);
             };
-            grid.Add(includeCheckBox);
+            grid.Add(includeCheckBox, row: 0);
 
-            Grid subGrid = new Grid();
-            subGrid.ColumnDefinitions = new ColumnDefinitionCollection()
+            if (spawnCard.HasText)
             {
-                new ColumnDefinition() {Width = GridLength.Star},
-                new ColumnDefinition() {Width = GridLength.Auto}
-            };
-
-            Label typeLabel = new Label()
-            {
-                Text = spawnCard.TypeText,
-                FontSize = 18,
-                Margin = new Thickness(0,6,0,0)
-            };
-            subGrid.Add(typeLabel);
-
-            Label cardNumberLabel = new Label()
-            {
-                Text = spawnCard.CardNumber.ToString(),
-                FontSize = 18,
-                Margin = new Thickness(0, 0, 6, 0),
-                HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End },
-                HorizontalTextAlignment = TextAlignment.End,
-                BindingContext = spawnCard
-            };
-            cardNumberLabel.SetBinding(Label.TextProperty, "CardNumber", BindingMode.Default, null, "{0:D2}");
-            subGrid.Add(cardNumberLabel, column:1);
-
-            if(spawnCard.HasText)
-            {
+                grid.AddRowDefinition(new RowDefinition() { Height = GridLength.Auto });
                 Label textLabel = new Label()
                 {
                     Text = spawnCard.CardNumber.ToString(),
-                    FontSize = 18,
+                    FontSize = 14,
                     TextType = TextType.Html,
                     BindingContext = spawnCard
                 };
                 textLabel.SetBinding(Label.TextProperty, "Text");
-                subGrid.Add(textLabel, row: 2);
+                grid.Add(textLabel, row: 2);
             }
 
-            grid.Add(subGrid, row:1);
-
-            SpawnCardsVerticalStackLayout.Add(grid);
+            Border border = new Border()
+            {
+                Content = grid,
+                StrokeThickness = 2.0,
+                Padding = new Thickness(2, 2, 2, 2),
+                Margin = new Thickness(0, 4, 0, 4),
+            };
+            SpawnCardsVerticalStackLayout.Add(border);
         }
+        BatchCommit();
     }
 }
