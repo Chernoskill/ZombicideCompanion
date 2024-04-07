@@ -5,13 +5,17 @@
              x:Class="ZombicideCompanion.Views.SpawnCards.SpawnCardsConfigPage"
              Title="Spawn cards config"
 			 xmlns:local="clr-namespace:ZombicideCompanion.Views.SpawnCards">
-	<ScrollView>
-		<VerticalStackLayout>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Border StrokeThickness="1.5" Padding="6,6,6,6" Margin="6,6,6,6">
 			<Grid RowSpacing="4">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="80"/>
+					<ColumnDefinition Width="92"/>
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -66,8 +70,10 @@
 					</Label.FormattedText>
 				</Label>
 			</Grid>
-			<VerticalStackLayout x:Name="SpawnCardsVerticalStackLayout" Padding="0,4,0,4" Spacing="6">
+		</Border>
+		<ScrollView Grid.Row="1">
+			<VerticalStackLayout x:Name="SpawnCardsVerticalStackLayout" Margin="6,6,6,6" Spacing="0">
 			</VerticalStackLayout>
-		</VerticalStackLayout>
-	</ScrollView>
+		</ScrollView>
+	</Grid>
 </ContentPage>
