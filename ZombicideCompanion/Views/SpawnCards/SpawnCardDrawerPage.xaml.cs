@@ -135,12 +135,12 @@ public partial class SpawnCardDrawerPage : ContentPage
 
     private void SetupSpawnCardElements()
     {
+        SpawnCardTextVerticalLayout.Clear();
+
         if (SpawnCardDrawn == null)
         {
-            SpawnCardTextVerticalLayout.Clear();
             return;
         }
-        SpawnCardTextVerticalLayout.Clear();
 
         Label titleLabel = new Label()
         {
@@ -153,14 +153,13 @@ public partial class SpawnCardDrawerPage : ContentPage
         };
         SpawnCardTextVerticalLayout.Add(titleLabel);
 
-
         if (SpawnCardDrawn.Type == SpawnCardDataType.Normal)
         {
             for (int i = SpawnCardDrawn.SpawnAmounts.Length - 1; i >= 0; i--)
             {
                 Label label = new Label
                 {
-                    Text = SpawnCardDrawn.SpawnAmounts[0].ToString() + (i == (int)DangerLevel ? " <<" : ""),
+                    Text = SpawnCardDrawn.SpawnAmounts[i].ToString() + (i == (int)DangerLevel ? " <<" : ""),
                     TextColor = DangerLevelColors[i],
                     FontSize = 18,
                     FontAttributes = i == (int)DangerLevel ? FontAttributes.Bold : FontAttributes.None
@@ -168,13 +167,14 @@ public partial class SpawnCardDrawerPage : ContentPage
                 SpawnCardTextVerticalLayout.Add(label);
             }
         }
+
         if (SpawnCardDrawn.Type == SpawnCardDataType.ExtraActivation)
         {
             for (int i = SpawnCardDrawn.Activations.Length - 1; i >= 0; i--)
             {
                 Label label = new Label
                 {
-                    Text = SpawnCardDrawn.Activations[0],
+                    Text = SpawnCardDrawn.Activations[i],
                     TextColor = DangerLevelColors[i],
                     FontSize = 18,
                     FontAttributes = i == (int)DangerLevel ? FontAttributes.Bold : FontAttributes.None
@@ -191,6 +191,7 @@ public partial class SpawnCardDrawerPage : ContentPage
             };
             SpawnCardTextVerticalLayout.Add(label);
         }
+
         if (string.IsNullOrEmpty(SpawnCardDrawn.Text) == false)
         {
             Label label = new Label

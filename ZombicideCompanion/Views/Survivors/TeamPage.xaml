@@ -21,12 +21,12 @@
 			<Button Grid.Column="1" 
 				Text="-" 
 				Clicked="TeamSizeDecreaseButton_Clicked"
-				FontSize="36"/>
+				FontSize="24"/>
 			<Label Grid.Column="2" FontSize="36" x:Name="teamSizeLabel" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"></Label>
 			<Button Grid.Column="3" 
 				Text="+" 
 				Clicked="TeamSizeIncreaseButton_Clicked"
-				FontSize="36"/>
+				FontSize="24"/>
 		</Grid>
 
 		<ListView Grid.Row="1" x:Name="randomTeamListView" SelectionMode="None" ItemTapped="TeamMemberTapped" Header="Team">
